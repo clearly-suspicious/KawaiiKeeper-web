@@ -16,6 +16,14 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    jwt({ token, user, account, profile, isNewUser }) {
+      console.log(token, user, account, profile, isNewUser, " In jwt");
+      return token;
+    },
+    redirect({ url, baseUrl }) {
+      console.log(url, baseUrl, " In redirect");
+      return baseUrl;
+    },
   },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
@@ -23,10 +31,6 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
   ],
 };
