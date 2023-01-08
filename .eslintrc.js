@@ -4,7 +4,12 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  plugins: ["@typescript-eslint", "simple-import-sort", "unused-imports"],
+  plugins: [
+    "@typescript-eslint",
+    "simple-import-sort",
+    "unused-imports",
+    "prettier",
+  ],
   extends: [
     "eslint:recommended",
     "next",
