@@ -19,7 +19,7 @@ model Example {
 // Necessary for Next auth
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId            String
+  userId            String  @db.ObjectId
   type              String
   provider          String
   providerAccountId String
@@ -38,7 +38,7 @@ model Account {
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
-  userId       String
+  userId       String   @db.ObjectId
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -51,6 +51,30 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  apiKey        ApiKey?
+  photos        Photo[]
+}
+
+model Photo {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime @default(now())
+  creatorId   String   @db.ObjectId
+  user        User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  link        String?
+  description String?
+  Prompt      String
+  tags        String[]
+  likes       Int?
+}
+
+model ApiKey {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  ownerId    String    @unique @db.ObjectId
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime?
+  lastUsedAt DateTime?
+  hashedKey  String    @unique()
+  user       User?     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

@@ -9,20 +9,7 @@ import { api } from "../utils/api";
 const Home: NextPage = () => {
   const queryClient = useQueryClient();
 
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
-  const cre = api.example.create.useMutation({
-    onSuccess: () => queryClient.invalidateQueries(),
-  });
-  const del = api.example.delete.useMutation({
-    onSuccess: () => queryClient.invalidateQueries(),
-  });
-  const read = api.example.read.useQuery();
-
-  function bleh() {
-    const name = "FUCK THIS";
-    cre.mutate({ name });
-  }
+  const hello = api.photos.hello.useQuery();
 
   return (
     <>
@@ -60,29 +47,13 @@ const Home: NextPage = () => {
               </div>
             </Link>
           </div>
-          <div className="bg-blue-300" onClick={bleh}>
-            create
-          </div>
 
-          <button
-            className="bg-blue-300"
-            onClick={() => {
-              console.log("deleting");
-              del.mutate();
-            }}
-          >
-            delete entries in Test
-          </button>
           <div className="flex flex-col items-center gap-2">
             <p className="text-2xl text-green-500">
-              {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+              {hello.data ? hello.data : "Loading tRPC query..."}
               <br />
             </p>
-            <ul className="text-2xl text-green-500">
-              {read.data?.map((u) => (
-                <li key={u.id}>{u.name}</li>
-              ))}
-            </ul>
+
             <br></br>
             <AuthShowcase />
           </div>
@@ -97,16 +68,16 @@ export default Home;
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
-  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: sessionData?.user !== undefined }
-  );
+  // const { data: secretMessage } = api.example.getSecretMessage.useQuery(
+  //   undefined, // no input
+  //   { enabled: sessionData?.user !== undefined }
+  // );
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl text-white">
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-        {secretMessage && <span> - {secretMessage}</span>}
+        {/* {secretMessage && <span> - {secretMessage}</span>} */}
       </p>
       <button
         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"

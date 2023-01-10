@@ -16,31 +16,52 @@
  * processing a request
  *
  */
+import { User } from "@prisma/client";
+import { initTRPC, Maybe, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import * as trpcNext from "@trpc/server/adapters/next";
+import { GetServerSidePropsContext } from "next";
 import { type Session } from "next-auth";
+import superjson from "superjson";
 
 import { getServerAuthSession } from "../auth";
 import { prisma } from "../db";
 
-type CreateContextOptions = {
+type CreateContextOptionsBase =
+  | trpcNext.CreateNextContextOptions
+  | GetServerSidePropsContext;
+
+type CreateContextOptions = CreateContextOptionsBase & {
   session: Session | null;
+  user: User | null;
 };
 
-/**
- * This helper generates the "internals" for a tRPC context. If you need to use
- * it, you can export it from here
- *
- * Examples of things you may need it for:
- * - testing, so we dont have to mock Next.js' req/res
- * - trpc's `createSSGHelpers` where we don't have req/res
- * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
- */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
-  return {
-    session: opts.session,
-    prisma,
-  };
-};
+async function getUserFromSession({
+  session,
+  req,
+}: {
+  session: Maybe<Session>;
+  req: CreateContextOptions["req"];
+}) {
+  if (!session?.user?.id) {
+    return null;
+  }
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+  });
+
+  if (!user) {
+    return null;
+  }
+  const { email } = user;
+  if (!email) {
+    return null;
+  }
+
+  return user;
+}
 
 /**
  * This is the actual context you'll use in your router. It will be used to
@@ -52,10 +73,13 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   // Get the session from the server using the unstable_getServerSession wrapper function
   const session = await getServerAuthSession({ req, res });
+  const user = await getUserFromSession({ session, req });
 
-  return createInnerTRPCContext({
+  return {
     session,
-  });
+    user,
+    prisma,
+  };
 };
 
 /**
@@ -64,8 +88,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
 
 const t = initTRPC
   .context<Awaited<ReturnType<typeof createTRPCContext>>>()
@@ -87,7 +109,8 @@ const t = initTRPC
  * This is how you create new routers and subrouters in your tRPC API
  * @see https://trpc.io/docs/router
  */
-export const createTRPCRouter = t.router;
+export const router = t.router;
+export const mergeRouters = t.mergeRouters;
 
 /**
  * Public (unauthed) procedure
@@ -103,13 +126,14 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
+  if (!ctx.session || !ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      session: ctx.session,
+      user: ctx.user,
     },
   });
 });
