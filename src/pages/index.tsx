@@ -9,7 +9,10 @@ import { api } from "../utils/api";
 const Home: NextPage = () => {
   const queryClient = useQueryClient();
 
-  const hello = api.photos.hello.useQuery();
+  const addImage = api.photos.addPhoto.useMutation({
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+  const allPhotos = api.photos.getAllPhotos.useQuery();
 
   return (
     <>
@@ -49,10 +52,32 @@ const Home: NextPage = () => {
           </div>
 
           <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-green-500">
-              {hello.data ? hello.data : "Loading tRPC query..."}
+            <div className="text-2xl text-green-500">
+              <button
+                className="rounded-md bg-green-500 px-4 py-2 text-white"
+                onClick={() => {
+                  addImage.mutate();
+                }}
+              >
+                Click me to insert 2 images
+              </button>
               <br />
-            </p>
+
+              <div className="container grid grid-cols-4 space-x-4 rounded-xl bg-white/10 p-4 text-white hover:cursor-pointer hover:bg-white/20">
+                {allPhotos.data?.map((u) => (
+                  <img key={u.id} src={u.link as string} alt="ntn"></img>
+                ))}
+              </div>
+
+              <button
+                className="rounded-md bg-green-500 px-4 py-2 text-white"
+                onClick={() => {
+                  addImage.mutate();
+                }}
+              >
+                Click me to delete image
+              </button>
+            </div>
 
             <br></br>
             <AuthShowcase />
