@@ -23,6 +23,7 @@ import * as trpcNext from "@trpc/server/adapters/next";
 import { GetServerSidePropsContext } from "next";
 import { type Session } from "next-auth";
 import superjson from "superjson";
+import { OpenApiMeta } from "trpc-openapi";
 
 import { getServerAuthSession } from "../auth";
 import { prisma } from "../db";
@@ -91,6 +92,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
 const t = initTRPC
   .context<Awaited<ReturnType<typeof createTRPCContext>>>()
+  .meta<OpenApiMeta>()
   .create({
     transformer: superjson,
     errorFormatter({ shape }) {

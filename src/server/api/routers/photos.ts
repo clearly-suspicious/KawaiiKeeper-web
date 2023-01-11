@@ -12,28 +12,43 @@ export const photosRouter = router({
     });
   }),
 
-  addPhoto: protectedProcedure.mutation(async ({ ctx }) => {
-    console.log("adding image");
-    const userAndPosts = await ctx.prisma.user.update({
-      where: {
-        id: ctx.user.id,
-      },
-      data: {
-        tokens: 0,
-        photos: {
-          create: [
-            { link: "https://picsum.photos/200/300", prompt: "deeznuts" },
-            {
-              link: "https://picsum.photos/200/300",
-              prompt: "star courtesan ✨is a clown",
-            },
-          ],
+  addPhoto: protectedProcedure
+    .meta({ openapi: { method: "POST", path: "/photo" } })
+    .input(
+      z.object({
+        link: z.string(),
+        prompt: z.string(),
+        nsfw: z.boolean(),
+      })
+    )
+    .output(z.void())
+    .mutation(async ({ ctx, input }) => {
+      console.log("adding image");
+      const createdPhoto = await ctx.prisma.photo.create({
+        data: {
+          ...input,
+          link: "https://picsum.photos/200/300",
+          prompt: "star courtesan ✨is a clown",
+          creatorId: ctx.user.id,
         },
-      },
-    });
+      });
 
-    console.log("created: ", userAndPosts);
-  }),
+      const userAndPosts = await ctx.prisma.user.update({
+        where: {
+          id: ctx.user.id,
+        },
+        data: {
+          tokens: 0,
+          photos: {
+            connect: {
+              id: createdPhoto.id,
+            },
+          },
+        },
+      });
+
+      console.log("created: ", userAndPosts, createdPhoto);
+    }),
 
   getAllPhotos: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.photo.findMany({
