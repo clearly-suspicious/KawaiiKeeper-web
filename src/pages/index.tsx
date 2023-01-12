@@ -1,7 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from "../utils/api";
@@ -15,6 +14,9 @@ const Home: NextPage = () => {
   const allPhotos = api.photos.getAllPhotos.useQuery();
   const photosById = api.photos.getPhotoById.useQuery();
   const delPhoto = api.photos.deletePhoto.useMutation({
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+  const likePhoto = api.photos.likePhoto.useMutation({
     onSuccess: () => queryClient.invalidateQueries(),
   });
 
@@ -36,34 +38,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 font-mono ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+            Kawaii <span className="text-[hsl(280,100%,70%)]">Keeper</span>
           </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
 
           <div className="flex flex-col items-center gap-2">
             <div className="text-2xl text-green-500">
@@ -84,11 +62,28 @@ const Home: NextPage = () => {
               <br />
 
               <div className="container grid grid-cols-4 space-x-4 rounded-xl bg-white/10 p-4 text-white hover:cursor-pointer hover:bg-white/20">
-                {allPhotos.data?.map((u) => (
-                  <img key={u.id} src={u.link as string} alt="ntn"></img>
-                ))}
+                {allPhotos.data?.map((u) => {
+                  return (
+                    <>
+                      <div>
+                        {u.id}, {u.likes}
+                      </div>
+                      <img key={u.id} src={u.link as string} alt="ntn"></img>
+                    </>
+                  );
+                })}
               </div>
-
+              <button
+                className="rounded-md bg-green-500 px-4 py-2 text-white"
+                onClick={() => {
+                  const params = {
+                    photoId: "63bfbc975cc8259f57873a02",
+                  };
+                  likePhoto.mutate(params);
+                }}
+              >
+                Click me to like image
+              </button>
               <button
                 className="rounded-md bg-green-500 px-4 py-2 text-white"
                 onClick={() => {
@@ -104,16 +99,23 @@ const Home: NextPage = () => {
               <hr></hr>
               <h3> photos by id </h3>
               <div className="container grid grid-cols-4 space-x-4 rounded-xl bg-white/10 p-4 text-white hover:cursor-pointer hover:bg-white/20">
-                {photosById.data?.map((u) => (
-                  <img key={u.id} src={u.link as string} alt="ntn"></img>
-                ))}
+                {photosById.data?.map((u) => {
+                  return (
+                    <>
+                      <div>
+                        {u.id}, {u.likes}
+                      </div>
+                      <img key={u.id} src={u.link as string} alt="ntn"></img>
+                    </>
+                  );
+                })}
               </div>
             </div>
             <button
               className="rounded-md bg-yellow-500 px-4 py-2 text-white"
               onClick={() => {
                 const params = {
-                  name: "nutsdeez colelction1",
+                  name: "nutsdeez",
                   tags: ["nsfw", "bleh"],
                 };
                 createCollection.mutate(params);
@@ -126,8 +128,8 @@ const Home: NextPage = () => {
               <h3>Collections: </h3>
               <ul>
                 {allCollections.data?.map((u) => (
-                  <li key={u.id}>
-                    {u.name}, tags: {u.tags}
+                  <li className="flex" key={u.id}>
+                    {u.id}: name: {u.name}, tags: {u.tags.join(", ")}
                   </li>
                 ))}
               </ul>
