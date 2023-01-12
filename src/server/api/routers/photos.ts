@@ -1,72 +1,57 @@
+import { Photo } from "@prisma/client";
 import { z } from "zod";
 
-import { protectedProcedure, publicProcedure, router } from "./../trpc";
+import { protectedProcedure, router } from "./../trpc";
 
 export const photosRouter = router({
-  list: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.photo.findMany({
-      where: {
-        creatorId: ctx.user.id,
-      },
-      orderBy: { createdAt: "desc" },
-    });
-  }),
+  getAllPhotos: protectedProcedure
+    .meta({ openapi: { method: "GET", path: "/photo/get-all" } })
+    .input(z.void())
+    .output(z.custom<Photo>().array())
+    .query(async ({ ctx }) => {
+      return await ctx.prisma.photo.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+    }),
+
+  getPhotoById: protectedProcedure
+    .meta({ openapi: { method: "GET", path: "/photo/get-by-id" } })
+    .input(z.void())
+    .output(z.custom<Photo>().array())
+    .query(async ({ ctx }) => {
+      return await ctx.prisma.photo.findMany({
+        where: {
+          creatorId: ctx.user.id,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }),
 
   addPhoto: protectedProcedure
-    .meta({ openapi: { method: "POST", path: "/photo" } })
+    .meta({ openapi: { method: "POST", path: "/photo/insert" } })
     .input(
       z.object({
         link: z.string(),
         prompt: z.string(),
         nsfw: z.boolean(),
+        tags: z.string().array(),
       })
     )
-    .output(z.void())
+    .output(z.custom<Photo>())
     .mutation(async ({ ctx, input }) => {
-      console.log("adding image");
-      const createdPhoto = await ctx.prisma.photo.create({
+      return await ctx.prisma.photo.create({
         data: {
           ...input,
-          link: "https://picsum.photos/200/300",
-          prompt: "star courtesan ✨is a clown",
-          creatorId: ctx.user.id,
-        },
-      });
-
-      const userAndPosts = await ctx.prisma.user.update({
-        where: {
-          id: ctx.user.id,
-        },
-        data: {
-          tokens: 0,
-          photos: {
+          user: {
             connect: {
-              id: createdPhoto.id,
+              id: ctx.user.id,
             },
           },
         },
       });
-
-      console.log("created: ", userAndPosts, createdPhoto);
     }),
-
-  getAllPhotos: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.photo.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  }),
-
-  getPhotosByUser: protectedProcedure.query(async ({ ctx }) => {
-    const photos = await ctx.prisma.photo.findMany({
-      where: {
-        creatorId: ctx.user.id,
-      },
-    });
-    console.log(photos);
-    return photos;
-  }),
 
   deletePhoto: protectedProcedure
     .input(z.object({ id: z.string() }))

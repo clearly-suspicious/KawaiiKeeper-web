@@ -13,6 +13,7 @@ const Home: NextPage = () => {
     onSuccess: () => queryClient.invalidateQueries(),
   });
   const allPhotos = api.photos.getAllPhotos.useQuery();
+  const photosById = api.photos.getPhotoById.useQuery();
 
   return (
     <>
@@ -54,12 +55,18 @@ const Home: NextPage = () => {
           <div className="flex flex-col items-center gap-2">
             <div className="text-2xl text-green-500">
               <button
-                className="rounded-md bg-green-500 px-4 py-2 text-white"
+                className="rounded-md bg-pink-600 px-4 py-2 text-white"
                 onClick={() => {
-                  addImage.mutate();
+                  const params = {
+                    link: "https://picsum.photos/200/300",
+                    prompt: "Lucy is da king",
+                    nsfw: false,
+                    tags: ["not gna tell", "deeznuts"],
+                  };
+                  addImage.mutate(params);
                 }}
               >
-                Click me to insert 2 images
+                Click me to insert an image
               </button>
               <br />
 
@@ -72,11 +79,19 @@ const Home: NextPage = () => {
               <button
                 className="rounded-md bg-green-500 px-4 py-2 text-white"
                 onClick={() => {
-                  addImage.mutate();
+                  // addImage.mutate();
                 }}
               >
                 Click me to delete image
               </button>
+              <br />
+              <hr></hr>
+              <h3> photos by id </h3>
+              <div className="container grid grid-cols-4 space-x-4 rounded-xl bg-white/10 p-4 text-white hover:cursor-pointer hover:bg-white/20">
+                {photosById.data?.map((u) => (
+                  <img key={u.id} src={u.link as string} alt="ntn"></img>
+                ))}
+              </div>
             </div>
 
             <br></br>
