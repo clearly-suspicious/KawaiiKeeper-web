@@ -36,7 +36,7 @@ export const photosRouter = router({
         link: z.string(),
         prompt: z.string(),
         nsfw: z.boolean(),
-        tags: z.string().array(),
+        tags: z.string().array().optional(),
       })
     )
     .output(z.custom<Photo>())
@@ -56,14 +56,10 @@ export const photosRouter = router({
   deletePhoto: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      console.log(input.id);
-      const deletedPhoto = await ctx.prisma.photo.delete({
+      return await ctx.prisma.photo.delete({
         where: {
           id: input.id,
         },
       });
-
-      console.log(deletedPhoto);
-      return deletedPhoto;
     }),
 });

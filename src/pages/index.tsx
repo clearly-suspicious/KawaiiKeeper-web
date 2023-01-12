@@ -14,6 +14,19 @@ const Home: NextPage = () => {
   });
   const allPhotos = api.photos.getAllPhotos.useQuery();
   const photosById = api.photos.getPhotoById.useQuery();
+  const delPhoto = api.photos.deletePhoto.useMutation({
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+
+  const createCollection = api.collections.insertNewCollection.useMutation({
+    onSuccess: () => queryClient.invalidateQueries(),
+  });
+  const allCollections = api.collections.getCollectionsByUser.useQuery();
+  const photoToCollection = api.collections.insertPhotoToCollection.useMutation(
+    {
+      onSuccess: () => queryClient.invalidateQueries(),
+    }
+  );
 
   return (
     <>
@@ -79,7 +92,10 @@ const Home: NextPage = () => {
               <button
                 className="rounded-md bg-green-500 px-4 py-2 text-white"
                 onClick={() => {
-                  // addImage.mutate();
+                  const params = {
+                    id: "63bfbb255cc8259f57873a00",
+                  };
+                  delPhoto.mutate(params);
                 }}
               >
                 Click me to delete image
@@ -93,8 +109,42 @@ const Home: NextPage = () => {
                 ))}
               </div>
             </div>
-
+            <button
+              className="rounded-md bg-yellow-500 px-4 py-2 text-white"
+              onClick={() => {
+                const params = {
+                  name: "nutsdeez colelction1",
+                  tags: ["nsfw", "bleh"],
+                };
+                createCollection.mutate(params);
+              }}
+            >
+              Click me to create a new Collection
+            </button>
             <br></br>
+            <div className="container grid grid-cols-4 space-x-4 rounded-xl bg-white/10 p-4 text-white hover:cursor-pointer hover:bg-white/20">
+              <h3>Collections: </h3>
+              <ul>
+                {allCollections.data?.map((u) => (
+                  <li key={u.id}>
+                    {u.name}, tags: {u.tags}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <br />
+            <button
+              className="rounded-md bg-indigo-500 px-4 py-2 text-white"
+              onClick={() => {
+                const params = {
+                  photoId: "63bfbc975cc8259f57873a02",
+                  collectionId: "63bfbb725cc8259f57873a01",
+                };
+                photoToCollection.mutate(params);
+              }}
+            >
+              Add image to collection (hardcoded in code);
+            </button>
             <AuthShowcase />
           </div>
         </div>
