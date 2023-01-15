@@ -44,18 +44,21 @@ model Session {
 }
 
 model User {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  name        String?
-  email       String?      @unique
-  ageVerified Boolean?
-  image       String?
-  accounts    Account[]
-  sessions    Session[]
-  apiKey      ApiKey?
-  photos      Photo[]
-  collections Collection[]
-  tokens      Int          @default(25)
-  role        Role         @default(USER)
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  discordId     String?      @unique
+  verified      Boolean?
+  emailVerified DateTime?
+  name          String?
+  email         String?      @unique
+  ageVerified   Boolean?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  apiKey        ApiKey?
+  photos        Photo[]
+  collections   Collection[]
+  tokens        Int          @default(25)
+  role          Role         @default(USER)
 }
 
 model Photo {
@@ -65,7 +68,7 @@ model Photo {
   user         User        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   collectionId String?     @db.ObjectId
   collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  link         String?
+  url          String?
   nsfw         Boolean?
   prompt       String
   tags         String[]

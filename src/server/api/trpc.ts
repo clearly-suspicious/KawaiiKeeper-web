@@ -81,6 +81,14 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
         id: token,
       },
     });
+    console.log(user, "user from token");
+    if (user) {
+      user = await prisma.user.findUnique({
+        where: {
+          discordId: req.headers.discordId as string,
+        },
+      });
+    }
   } else {
     // Get the session from the server using the unstable_getServerSession wrapper function
 

@@ -5,7 +5,7 @@ import { protectedProcedure, router } from "./../trpc";
 
 export const photosRouter = router({
   getAllPhotos: protectedProcedure
-    .meta({ openapi: { method: "GET", path: "/photo/get-all" } })
+    .meta({ openapi: { method: "GET", path: "/photo" } })
     .input(z.void())
     .output(z.custom<Photo>().array())
     .query(async ({ ctx }) => {
@@ -17,24 +17,23 @@ export const photosRouter = router({
     }),
 
   getPhotoById: protectedProcedure
-    .meta({ openapi: { method: "GET", path: "/photo/get-by-id" } })
-    .input(z.void())
-    .output(z.custom<Photo>().array())
-    .query(async ({ ctx }) => {
-      return await ctx.prisma.photo.findMany({
+    .meta({ openapi: { method: "GET", path: "/photo/{id}" } })
+    .input(z.object({ id: z.string() }))
+    .output(z.custom<Photo>().nullable())
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.photo.findFirst({
         where: {
-          creatorId: ctx.user.id,
+          id: input.id,
         },
-        orderBy: { createdAt: "desc" },
       });
     }),
 
   likePhoto: protectedProcedure
-    .input(z.object({ photoId: z.string() }))
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.photo.update({
         where: {
-          id: input.photoId,
+          id: input.id,
         },
         data: {
           likes: {
@@ -45,10 +44,10 @@ export const photosRouter = router({
     }),
 
   addPhoto: protectedProcedure
-    .meta({ openapi: { method: "POST", path: "/photo/insert" } })
+    .meta({ openapi: { method: "POST", path: "/photo" } })
     .input(
       z.object({
-        link: z.string(),
+        url: z.string(),
         prompt: z.string(),
         nsfw: z.boolean(),
         tags: z.string().array().optional(),

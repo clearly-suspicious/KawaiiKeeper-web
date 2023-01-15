@@ -29,7 +29,6 @@ const Home: NextPage = () => {
       onSuccess: () => queryClient.invalidateQueries(),
     }
   );
-  const createApiKey = api.apiKeys.create.useMutation();
 
   return (
     <>
