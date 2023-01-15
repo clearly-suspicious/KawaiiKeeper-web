@@ -29,6 +29,21 @@ export const photosRouter = router({
       });
     }),
 
+  likePhoto: protectedProcedure
+    .input(z.object({ photoId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.photo.update({
+        where: {
+          id: input.photoId,
+        },
+        data: {
+          likes: {
+            increment: 1,
+          },
+        },
+      });
+    }),
+
   addPhoto: protectedProcedure
     .meta({ openapi: { method: "POST", path: "/photo/insert" } })
     .input(
