@@ -1,5 +1,4 @@
 import { createHash, randomBytes } from "crypto";
-import { v4 } from "uuid";
 import { z } from "zod";
 
 import { router } from "./../trpc";
@@ -27,10 +26,8 @@ export const apiKeysRouter = router({
   create: protectedProcedure
     .input(
       z.object({
-        note: z.string().optional().nullish(),
         expiresAt: z.date().optional().nullable(),
         neverExpires: z.boolean().optional(),
-        appId: z.string().optional().nullable(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -38,9 +35,8 @@ export const apiKeysRouter = router({
       // Here we snap never expires before deleting it so it's not passed to prisma create call.
       const neverExpires = input.neverExpires;
       delete input.neverExpires;
-      await ctx.prisma.apiKey.create({
+      const createdApiKey = await ctx.prisma.apiKey.create({
         data: {
-          id: v4(),
           ownerId: ctx.user.id,
           ...input,
           // And here we pass a null to expiresAt if never expires is true. otherwise just pass expiresAt from input
@@ -48,7 +44,19 @@ export const apiKeysRouter = router({
           hashedKey: hashedApiKey as string,
         },
       });
-      const prefixedApiKey = `${process.env.API_KEY_PREFIX ?? "cal_"}${apiKey}`;
+      await ctx.prisma.user.update({
+        where: {
+          id: ctx.user.id,
+        },
+        data: {
+          apiKey: {
+            connect: {
+              id: createdApiKey.id,
+            },
+          },
+        },
+      });
+      const prefixedApiKey = `${process.env.API_KEY_PREFIX ?? "kk_"}${apiKey}`;
       return prefixedApiKey;
     }),
 

@@ -71,10 +71,21 @@ async function getUserFromSession({
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
-
-  // Get the session from the server using the unstable_getServerSession wrapper function
+  let user: User | null = null;
   const session = await getServerAuthSession({ req, res });
-  const user = await getUserFromSession({ session, req });
+
+  if (req.headers.authorization) {
+    const token = req.headers.authorization.split(" ")[1];
+    user = await prisma.user.findUnique({
+      where: {
+        id: token,
+      },
+    });
+  } else {
+    // Get the session from the server using the unstable_getServerSession wrapper function
+
+    user = await getUserFromSession({ session, req });
+  }
 
   return {
     session,

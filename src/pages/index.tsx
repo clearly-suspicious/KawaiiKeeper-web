@@ -27,6 +27,7 @@ const Home: NextPage = () => {
       onSuccess: () => queryClient.invalidateQueries(),
     }
   );
+  const createApiKey = api.apiKeys.create.useMutation();
 
   return (
     <>
@@ -144,6 +145,17 @@ const Home: NextPage = () => {
               }}
             >
               Add image to collection (hardcoded in code);
+            </button>
+            <button
+              className="rounded-md bg-indigo-500 px-4 py-2 text-white"
+              onClick={async () => {
+                const apiKey = await createApiKey.mutate({
+                  neverExpires: true,
+                });
+                console.log(apiKey);
+              }}
+            >
+              Add API key
             </button>
             <AuthShowcase />
           </div>
