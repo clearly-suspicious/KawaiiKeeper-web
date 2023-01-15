@@ -3,32 +3,8 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import { api } from "../utils/api";
-
 const Home: NextPage = () => {
   const queryClient = useQueryClient();
-
-  const addImage = api.photos.addPhoto.useMutation({
-    onSuccess: () => queryClient.invalidateQueries(),
-  });
-  const allPhotos = api.photos.getAllPhotos.useQuery();
-  const photosById = api.photos.getPhotoById.useQuery();
-  const delPhoto = api.photos.deletePhoto.useMutation({
-    onSuccess: () => queryClient.invalidateQueries(),
-  });
-  const likePhoto = api.photos.likePhoto.useMutation({
-    onSuccess: () => queryClient.invalidateQueries(),
-  });
-
-  const createCollection = api.collections.insertNewCollection.useMutation({
-    onSuccess: () => queryClient.invalidateQueries(),
-  });
-  const allCollections = api.collections.getCollectionsByUser.useQuery();
-  const photoToCollection = api.collections.insertPhotoToCollection.useMutation(
-    {
-      onSuccess: () => queryClient.invalidateQueries(),
-    }
-  );
 
   return (
     <>
@@ -44,110 +20,6 @@ const Home: NextPage = () => {
           </h1>
 
           <div className="flex flex-col items-center gap-2">
-            <div className="text-2xl text-green-500">
-              <button
-                className="rounded-md bg-pink-600 px-4 py-2 text-white"
-                onClick={() => {
-                  const params = {
-                    link: "https://picsum.photos/200/300",
-                    prompt: "Lucy is da king",
-                    nsfw: false,
-                    tags: ["not gna tell", "deeznuts"],
-                  };
-                  addImage.mutate(params);
-                }}
-              >
-                Click me to insert an image
-              </button>
-              <br />
-
-              <div className="container grid grid-cols-4 space-x-4 rounded-xl bg-white/10 p-4 text-white hover:cursor-pointer hover:bg-white/20">
-                {allPhotos.data?.map((u) => {
-                  return (
-                    <>
-                      <div>
-                        {u.id}, {u.likes}
-                      </div>
-                      <img key={u.id} src={u.link as string} alt="ntn"></img>
-                    </>
-                  );
-                })}
-              </div>
-              <button
-                className="rounded-md bg-green-500 px-4 py-2 text-white"
-                onClick={() => {
-                  const params = {
-                    photoId: "63bfbc975cc8259f57873a02",
-                  };
-                  likePhoto.mutate(params);
-                }}
-              >
-                Click me to like image
-              </button>
-              <button
-                className="rounded-md bg-green-500 px-4 py-2 text-white"
-                onClick={() => {
-                  const params = {
-                    id: "63bfbb255cc8259f57873a00",
-                  };
-                  delPhoto.mutate(params);
-                }}
-              >
-                Click me to delete image
-              </button>
-              <br />
-              <hr></hr>
-              <h3> photos by id </h3>
-              <div className="container grid grid-cols-4 space-x-4 rounded-xl bg-white/10 p-4 text-white hover:cursor-pointer hover:bg-white/20">
-                {photosById.data?.map((u) => {
-                  return (
-                    <>
-                      <div>
-                        {u.id}, {u.likes}
-                      </div>
-                      <img key={u.id} src={u.link as string} alt="ntn"></img>
-                    </>
-                  );
-                })}
-              </div>
-            </div>
-            <button
-              className="rounded-md bg-yellow-500 px-4 py-2 text-white"
-              onClick={() => {
-                const params = {
-                  name: "nutsdeez",
-                  tags: ["nsfw", "bleh"],
-                };
-                createCollection.mutate(params);
-              }}
-            >
-              Click me to create a new Collection
-            </button>
-            <br></br>
-            <div className="container grid grid-cols-4 space-x-4 rounded-xl bg-white/10 p-4 text-white hover:cursor-pointer hover:bg-white/20">
-              <h3>Collections: </h3>
-              <ul>
-                {allCollections.data?.map((u) => (
-                  <li className="flex" key={u.id}>
-                    {u.id}: name: {u.name}, tags: {u.tags.join(", ")}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <br />
-            <button
-              className="rounded-md bg-indigo-500 px-4 py-2 text-white"
-              onClick={() => {
-                const params = {
-                  photoId: "63bfbc975cc8259f57873a02",
-                  collectionId: "63bfbb725cc8259f57873a01",
-                };
-                photoToCollection.mutate(params);
-              }}
-            >
-              Add image to collection (hardcoded in code);
-            </button>
-
             <AuthShowcase />
           </div>
         </div>
