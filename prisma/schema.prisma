@@ -44,29 +44,35 @@ model Session {
 }
 
 model User {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  discordId     String?       @unique
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  discordId     String?   @unique
   verified      Boolean?
   emailVerified DateTime?
   name          String?
-  email         String?
-  ageVerified   Boolean?
+  email         String?   @unique
   image         String?
   accounts      Account[]
   sessions      Session[]
-  apiKey        ApiKey?
-  photos        Photo[]
-  collections   Collection[]
-  tokens        Int           @default(25)
-  role          Role          @default(USER)
-  interactions  Interaction[]
+}
+
+model InternalUser {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  discordId    String?       @unique
+  name         String?
+  ageVerified  Boolean?
+  apiKey       ApiKey?
+  photos       Photo[]
+  collections  Collection[]
+  tokens       Int           @default(25)
+  role         Role          @default(USER)
+  interactions Interaction[]
 }
 
 model Photo {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   createdAt    DateTime      @default(now())
   creatorId    String        @db.ObjectId
-  user         User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  user         InternalUser  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   collectionId String?       @db.ObjectId
   collection   Collection?   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   url          String?
@@ -77,25 +83,25 @@ model Photo {
 }
 
 model Collection {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  creatorId String   @db.ObjectId
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  creatorId String       @db.ObjectId
   name      String
   tags      String[]
   likes     Int?
   photos    Photo[]
-  user      User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  user      InternalUser @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 }
 
 model ApiKey {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  ownerId    String    @unique @db.ObjectId
-  createdAt  DateTime  @default(now())
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
+  ownerId    String        @unique @db.ObjectId
+  createdAt  DateTime      @default(now())
   expiresAt  DateTime?
   lastUsedAt DateTime?
-  hashedKey  String    @unique()
-  user       User?     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  hashedKey  String        @unique()
+  user       InternalUser? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -113,7 +119,7 @@ model Interaction {
   photoId   String          @db.ObjectId
   type      InteractionType
   photo     Photo           @relation(fields: [photoId], references: [id], onDelete: Cascade)
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      InternalUser    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Role {

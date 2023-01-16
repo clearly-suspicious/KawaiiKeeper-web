@@ -15,7 +15,7 @@
  * processing a request
  *
  */
-import { User } from "@prisma/client";
+import { InternalUser, User } from "@prisma/client";
 import { initTRPC, Maybe, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import * as trpcNext from "@trpc/server/adapters/next";
@@ -71,7 +71,7 @@ async function getUserFromSession({
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
-  let user: User | null = null;
+  let user: InternalUser | null = null;
   const session = await getServerAuthSession({ req, res });
   const token = req.headers.authorization;
 
@@ -87,13 +87,13 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
     });
     //if its a valid apiKey, get the user from the discord-id in the header
     if (apiKey && req.headers["discord-id"]) {
-      user = await prisma.user.findUnique({
+      user = await prisma.internalUser.findUnique({
         where: {
           discordId: req.headers["discord-id"] as string,
         },
       });
       if (!user) {
-        const createdUser = await prisma.user.create({
+        const createdUser = await prisma.internalUser.create({
           data: {
             discordId: req.headers["discord-id"] as string,
             name: decodeURIComponent(req.headers["discord-username"] as string),
@@ -106,7 +106,12 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   } else {
     // Get the session from the server using the unstable_getServerSession wrapper function
 
-    user = await getUserFromSession({ session, req });
+    const authedUser = await getUserFromSession({ session, req });
+    user = await prisma.internalUser.findUnique({
+      where: {
+        discordId: authedUser?.discordId as string,
+      },
+    });
   }
 
   return {
