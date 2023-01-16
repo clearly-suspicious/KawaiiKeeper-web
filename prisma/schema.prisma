@@ -75,11 +75,12 @@ model Photo {
   user         InternalUser  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   collectionId String?       @db.ObjectId
   collection   Collection?   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  url          String?
+  url          String?       @unique
   nsfw         Boolean?
   prompt       String
   tags         String[]
   interactions Interaction[]
+  likes        Int           @default(0)
 }
 
 model Collection {
@@ -115,7 +116,7 @@ model VerificationToken {
 model Interaction {
   id        String          @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime        @default(now())
-  userId    String          @db.ObjectId
+  userId    String          @unique @db.ObjectId
   photoId   String          @db.ObjectId
   type      InteractionType
   photo     Photo           @relation(fields: [photoId], references: [id], onDelete: Cascade)
@@ -129,4 +130,5 @@ enum Role {
 
 enum InteractionType {
   LIKE
+  UNLIKE
 }

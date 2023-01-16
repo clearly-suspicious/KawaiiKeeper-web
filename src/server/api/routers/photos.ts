@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { protectedProcedure, router } from "./../trpc";
 
-export const interactionTypeEnum = z.enum(["LIKE"]);
+export const interactionTypeEnum = z.enum(["LIKE", "UNLIKE"]);
 
 export const photosRouter = router({
   getAllPhotos: protectedProcedure
@@ -31,21 +31,51 @@ export const photosRouter = router({
     }),
 
   likePhoto: protectedProcedure
-    .input(z.object({ id: z.string(), type: interactionTypeEnum }))
+    .meta({ openapi: { method: "PATCH", path: "/photo/{interaction}" } })
+    .input(
+      z.object({
+        url: z.string(),
+        interaction: interactionTypeEnum,
+      })
+    )
+    .output(z.custom<Photo>().nullable())
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.photo.update({
+      console.log(input);
+      const url = decodeURIComponent(input.url);
+      const interactionType = input.interaction.toUpperCase();
+
+      const photo = await ctx.prisma.photo.findFirst({
         where: {
-          id: input.id,
-        },
-        data: {
-          interactions: {
-            create: {
-              type: input.type,
-              userId: ctx.user.id,
-            },
-          },
+          url,
         },
       });
+
+      if (!photo) return null;
+
+      if (interactionType === "UNLIKE") {
+        await ctx.prisma.interaction.deleteMany({
+          where: {
+            photoId: photo.id,
+            userId: ctx.user.id,
+            type: "LIKE",
+          },
+        });
+        return photo;
+      } else if (interactionType === "LIKE") {
+        return await ctx.prisma.photo.update({
+          where: {
+            url,
+          },
+          data: {
+            interactions: {
+              create: {
+                type: interactionType,
+                userId: ctx.user.id,
+              },
+            },
+          },
+        });
+      } else return null;
     }),
 
   addPhoto: protectedProcedure
