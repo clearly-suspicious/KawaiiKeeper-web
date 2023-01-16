@@ -44,7 +44,7 @@ export const apiKeysRouter = router({
           hashedKey: hashedApiKey as string,
         },
       });
-      await ctx.prisma.user.update({
+      await ctx.prisma.internalUser.update({
         where: {
           id: ctx.user.id,
         },
@@ -71,7 +71,7 @@ export const apiKeysRouter = router({
       const { id } = input;
 
       //delete it from the user
-      await ctx.prisma.user.update({
+      await ctx.prisma.internalUser.update({
         where: {
           id: ctx.user.id,
         },
