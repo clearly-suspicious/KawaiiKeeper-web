@@ -6,7 +6,6 @@
  * tl;dr - this is where all the tRPC server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end
  */
-
 /**
  * 1. CONTEXT
  *
@@ -25,6 +24,7 @@ import { type Session } from "next-auth";
 import superjson from "superjson";
 import { OpenApiMeta } from "trpc-openapi";
 
+import { hashAPIKey } from "./routers/apiKey";
 import { getServerAuthSession } from "../auth";
 import { prisma } from "../db";
 
@@ -73,19 +73,23 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
   let user: User | null = null;
   const session = await getServerAuthSession({ req, res });
+  const token = req.headers.authorization;
 
-  if (req.headers.authorization) {
-    const token = req.headers.authorization.split(" ")[1];
-    user = await prisma.user.findUnique({
+  if (token) {
+    const hashedKey = hashAPIKey(
+      token.substring(process.env.API_KEY_PREFIX?.length || 3)
+    );
+
+    const apiKey = await prisma.apiKey.findUnique({
       where: {
-        id: token,
+        hashedKey,
       },
     });
-    console.log(user, "user from token");
-    if (user) {
+    //if its a valid apiKey, get the user from the discord-id in the header
+    if (apiKey && req.headers["discord-id"]) {
       user = await prisma.user.findUnique({
         where: {
-          discordId: req.headers.discordId as string,
+          discordId: req.headers["discord-id"] as string,
         },
       });
     }
@@ -147,7 +151,7 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.user) {
+  if (!ctx.session && !ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({

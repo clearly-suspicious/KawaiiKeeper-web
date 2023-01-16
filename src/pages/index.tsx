@@ -3,8 +3,12 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { signIn, signOut, useSession } from "next-auth/react";
 
+import { api } from "../utils/api";
+
 const Home: NextPage = () => {
   const queryClient = useQueryClient();
+
+  const createApiKey = api.apiKeys.create.useMutation();
 
   return (
     <>
@@ -20,6 +24,9 @@ const Home: NextPage = () => {
           </h1>
 
           <div className="flex flex-col items-center gap-2">
+            <button onClick={() => createApiKey.mutate({ neverExpires: true })}>
+              api key
+            </button>
             <AuthShowcase />
           </div>
         </div>
