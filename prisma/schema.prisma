@@ -116,7 +116,7 @@ model VerificationToken {
 model Interaction {
   id        String          @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime        @default(now())
-  userId    String          @unique @db.ObjectId
+  userId    String          @db.ObjectId
   photoId   String          @db.ObjectId
   type      InteractionType
   photo     Photo           @relation(fields: [photoId], references: [id], onDelete: Cascade)

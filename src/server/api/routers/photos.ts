@@ -60,8 +60,14 @@ export const photosRouter = router({
             type: "LIKE",
           },
         });
-        console.log(deletedLikes);
-        return photo;
+        return await ctx.prisma.photo.update({
+          where: {
+            url,
+          },
+          data: {
+            likes: { decrement: deletedLikes.count },
+          },
+        });
       } else if (interactionType === "LIKE") {
         return await ctx.prisma.photo.update({
           where: {
@@ -74,6 +80,7 @@ export const photosRouter = router({
                 userId: ctx.user.id,
               },
             },
+            likes: { increment: 1 },
           },
         });
       } else return null;
