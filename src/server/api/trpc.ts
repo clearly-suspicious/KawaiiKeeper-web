@@ -92,6 +92,13 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
           discordId: req.headers["discord-id"] as string,
         },
       });
+      if (!user) {
+        const createdUser = await prisma.user.create({
+          data: { discordId: req.headers["discord-id"] as string },
+        });
+        user = createdUser;
+        console.log("created user", createdUser);
+      }
     }
   } else {
     // Get the session from the server using the unstable_getServerSession wrapper function
