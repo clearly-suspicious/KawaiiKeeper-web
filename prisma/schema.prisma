@@ -49,7 +49,7 @@ model User {
   verified      Boolean?
   emailVerified DateTime?
   name          String?
-  email         String?       @unique
+  email         String?
   ageVerified   Boolean?
   image         String?
   accounts      Account[]
@@ -104,11 +104,6 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model Test {
-  id   String  @id @default(auto()) @map("_id") @db.ObjectId
-  name String?
 }
 
 model Interaction {
