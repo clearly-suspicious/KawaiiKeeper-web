@@ -94,7 +94,10 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
       });
       if (!user) {
         const createdUser = await prisma.user.create({
-          data: { discordId: req.headers["discord-id"] as string },
+          data: {
+            discordId: req.headers["discord-id"] as string,
+            name: decodeURIComponent(req.headers["discord-username"] as string),
+          },
         });
         user = createdUser;
         console.log("created user", createdUser);
