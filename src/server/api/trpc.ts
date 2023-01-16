@@ -85,6 +85,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
         hashedKey,
       },
     });
+
     //if its a valid apiKey, get the user from the discord-id in the header
     if (apiKey && req.headers["discord-id"]) {
       user = await prisma.internalUser.findUnique({
