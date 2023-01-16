@@ -51,11 +51,12 @@ export const authOptions: NextAuthOptions = {
   ],
   events: {
     createUser: async (message) => {
-      const existingUser = prisma.internalUser.findUnique({
+      const existingUser = await prisma.internalUser.findUnique({
         where: {
           discordId: message.user.discordId,
         },
       });
+      console.log("existingUser", existingUser);
       if (!existingUser)
         await prisma.internalUser.create({
           data: {
