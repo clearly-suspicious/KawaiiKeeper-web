@@ -53,13 +53,14 @@ export const photosRouter = router({
       if (!photo) return null;
 
       if (interactionType === "UNLIKE") {
-        await ctx.prisma.interaction.deleteMany({
+        const deletedLikes = await ctx.prisma.interaction.deleteMany({
           where: {
             photoId: photo.id,
             userId: ctx.user.id,
             type: "LIKE",
           },
         });
+        console.log(deletedLikes);
         return photo;
       } else if (interactionType === "LIKE") {
         return await ctx.prisma.photo.update({
