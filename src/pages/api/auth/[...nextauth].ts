@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
 export default NextAuth(authOptions);
 
 declare module "next-auth" {
-  interface User extends PrismaUser {
+  interface User extends Partial<PrismaUser> {
     discordId: string;
   }
 }
