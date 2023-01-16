@@ -3,6 +3,8 @@ import { z } from "zod";
 
 import { protectedProcedure, router } from "./../trpc";
 
+export const interactionTypeEnum = z.enum(["LIKE"]);
+
 export const photosRouter = router({
   getAllPhotos: protectedProcedure
     .meta({ openapi: { method: "GET", path: "/photo" } })
@@ -29,15 +31,18 @@ export const photosRouter = router({
     }),
 
   likePhoto: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ id: z.string(), type: interactionTypeEnum }))
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.photo.update({
         where: {
           id: input.id,
         },
         data: {
-          likes: {
-            increment: 1,
+          interactions: {
+            create: {
+              type: input.type,
+              userId: ctx.user.id,
+            },
           },
         },
       });
