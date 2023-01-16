@@ -1,4 +1,5 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { User as PrismaUser } from "@prisma/client";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 
@@ -61,3 +62,9 @@ export const authOptions: NextAuthOptions = {
 };
 
 export default NextAuth(authOptions);
+
+declare module "next-auth" {
+  interface User extends PrismaUser {
+    discordId: string;
+  }
+}
