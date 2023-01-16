@@ -34,7 +34,8 @@ type CreateContextOptionsBase =
 
 type CreateContextOptions = CreateContextOptionsBase & {
   session: Session | null;
-  user: User | null;
+  user: InternalUser | null;
+  authedUser: User | null;
 };
 
 async function getUserFromSession({
@@ -72,6 +73,7 @@ async function getUserFromSession({
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
   let user: InternalUser | null = null;
+  let authedUser: User | null = null;
   const session = await getServerAuthSession({ req, res });
   const token = req.headers.authorization;
 
@@ -107,7 +109,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   } else {
     // Get the session from the server using the unstable_getServerSession wrapper function
 
-    const authedUser = await getUserFromSession({ session, req });
+    authedUser = await getUserFromSession({ session, req });
     user = await prisma.internalUser.findUnique({
       where: {
         discordId: authedUser?.discordId as string,
@@ -117,6 +119,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return {
     session,
+    authedUser,
     user,
     prisma,
   };
