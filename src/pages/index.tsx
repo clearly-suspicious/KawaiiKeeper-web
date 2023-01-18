@@ -27,7 +27,7 @@ const Button = ({ children, className, ...rest }: ButtonProps) => {
 
 const Header = () => {
   return (
-    <div className="fixed top-0 my-12 flex w-full items-center justify-between px-5 text-white lg:px-14">
+    <div className="fixed top-0 my-6 lg:my-12 flex w-full items-center justify-between px-5 text-white lg:px-14">
       <div className="text-[18px] lg:text-[24px]">KawaiiKeeper</div>
       <div>
         <Button onClick={() => signIn("discord")}>

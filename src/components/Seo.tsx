@@ -6,7 +6,7 @@ const defaultMeta = {
   title: "Kawaii Keeper",
   siteName: "Kawaii Keeper",
   description:
-    "A discord bot for generating anime characters with a social media",
+    "A Discord bot with which you can generate custom anime characters. Comes with a website where you can share, like and curate your creations with other users.",
   /** Without additional '/' on the end, e.g. https://theodorusclarence.com */
   url: "https://www.kawaiikeeper.vercel.app",
   type: "website",
