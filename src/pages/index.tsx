@@ -1,5 +1,6 @@
 import { type NextPage } from "next";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { twMerge } from "tailwind-merge";
 
@@ -26,12 +27,16 @@ const Button = ({ children, className, ...rest }: ButtonProps) => {
 };
 
 const Header = () => {
+  const router = useRouter();
   return (
     <div className="fixed top-0 my-6 flex w-full items-center justify-between px-5 text-white lg:my-12 lg:px-14">
       <div className="text-[18px] lg:text-[24px]">KawaiiKeeper</div>
       <div>
         <Button onClick={() => signIn("discord")}>
           <>Log In</>
+        </Button>
+        <Button type="button" onClick={() => router.push("/donate")}>
+          <>Donate now</>
         </Button>
       </div>
     </div>
