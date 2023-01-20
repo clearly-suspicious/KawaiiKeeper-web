@@ -27,7 +27,7 @@ const Button = ({ children, className, ...rest }: ButtonProps) => {
 
 const Header = () => {
   return (
-    <div className="fixed top-0 my-6 lg:my-12 flex w-full items-center justify-between px-5 text-white lg:px-14">
+    <div className="fixed top-0 my-6 flex w-full items-center justify-between px-5 text-white lg:my-12 lg:px-14">
       <div className="text-[18px] lg:text-[24px]">KawaiiKeeper</div>
       <div>
         <Button onClick={() => signIn("discord")}>
@@ -38,7 +38,7 @@ const Header = () => {
   );
 };
 
-const Home: NextPage = () => {
+const Home: NextPage & { auth: boolean } = () => {
   return (
     <>
       <Seo />
@@ -57,6 +57,7 @@ const Home: NextPage = () => {
             <h1 className="max-w-[728px] bg-gradient-to-b from-[#FFFFFFD9] to-[#ECECEC3D] bg-clip-text text-center text-[48px] font-[500] leading-[105.52%] tracking-[-0.025em] [text-fill-color:transparent] [-webkit-text-fill-color:transparent] [-webkit-background-clip:_text] lg:text-[64px]">
               Generate your favorite anime characters
             </h1>
+
             <a href="https://discord.com/api/oauth2/authorize?client_id=1054881371472015370&permissions=8&scope=bot%20applications.commands">
               <Button className="text-[18px] lg:text-[26px]">
                 Invite to discord
@@ -71,6 +72,8 @@ const Home: NextPage = () => {
     </>
   );
 };
+
+Home.auth = true;
 
 export default Home;
 
