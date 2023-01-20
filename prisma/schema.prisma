@@ -123,6 +123,14 @@ model Interaction {
   user      InternalUser    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model SupportRequests {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  name      String
+  emailId   String
+  concern   String
+}
+
 enum Role {
   ADMIN
   USER

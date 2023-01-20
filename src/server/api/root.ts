@@ -1,6 +1,7 @@
 import { apiKeysRouter } from "./routers/apiKey";
 import { collectionsRouter } from "./routers/collections";
 import { photosRouter } from "./routers/photos";
+import { supportRouter } from "./routers/support";
 import { mergeRouters, router } from "./trpc";
 
 /**
@@ -9,7 +10,12 @@ import { mergeRouters, router } from "./trpc";
  * All routers added in /api/routers should be manually added here
  */
 export const appRouter = mergeRouters(
-  router({ apiKeys: apiKeysRouter, photos: photosRouter, collections: collectionsRouter })
+  router({
+    apiKeys: apiKeysRouter,
+    photos: photosRouter,
+    collections: collectionsRouter,
+    support: supportRouter,
+  })
 );
 
 // export type definition of API
