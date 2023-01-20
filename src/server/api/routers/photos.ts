@@ -6,6 +6,50 @@ import { protectedProcedure, router } from "./../trpc";
 export const interactionTypeEnum = z.enum(["LIKE", "UNLIKE"]);
 
 export const photosRouter = router({
+  getMostLikedPhotos: protectedProcedure
+    .meta({ openapi: { method: "GET", path: "/photo/most-liked" } })
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).optional(),
+        cursor: z.string().optional(),
+      })
+    )
+    .output(
+      z.object({
+        data: z.custom<Photo>().array(),
+        pagination: z.object({
+          nextCursor: z.string().nullish(),
+          prevCursor: z.string().nullish(),
+          hasMore: z.boolean(),
+          count: z.number(),
+        }),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const take = input.limit ?? 25;
+      const skip = input.cursor ? 1 : 0; //skip cursor if it exists
+
+      const photos = await ctx.prisma.photo.findMany({
+        take,
+        skip,
+        cursor: input.cursor ? { id: input.cursor } : undefined,
+        orderBy: {
+          likes: "desc",
+        },
+      });
+      const lastPhoto = photos[photos.length - 1];
+      const nextCursor = lastPhoto ? lastPhoto.id : undefined;
+      return {
+        data: photos,
+        pagination: {
+          nextCursor,
+          prevCursor: input.cursor,
+          hasMore: nextCursor ? true : false,
+          count: photos.length,
+        },
+      };
+    }),
+  //TODO add pagination
   getAllPhotos: protectedProcedure
     .meta({ openapi: { method: "GET", path: "/photo" } })
     .input(z.void())

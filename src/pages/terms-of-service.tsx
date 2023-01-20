@@ -2,7 +2,7 @@ import { NextPage } from "next";
 
 const TermsOfService: NextPage = () => {
   return (
-    <>
+    <main className="prose prose-invert">
       <h1>Terms of Service</h1>
       <br></br>
       <div>Effective Date: Jan 19 2023</div>
@@ -158,7 +158,7 @@ const TermsOfService: NextPage = () => {
         associated with your account, so keep that in mind before you decide to
         terminate your account.
       </p>
-    </>
+    </main>
   );
 };
 

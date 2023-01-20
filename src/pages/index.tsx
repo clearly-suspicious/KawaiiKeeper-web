@@ -1,6 +1,6 @@
-import { type NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { type Session } from "next-auth";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { twMerge } from "tailwind-merge";
 
@@ -26,30 +26,35 @@ const Button = ({ children, className, ...rest }: ButtonProps) => {
   );
 };
 
-const Header = () => {
+const Header = ({ sessionData }: { sessionData?: Session | null }) => {
   const router = useRouter();
   return (
     <div className="fixed top-0 my-6 flex w-full items-center justify-between px-5 text-white lg:my-12 lg:px-14">
       <div className="text-[18px] lg:text-[24px]">KawaiiKeeper</div>
       <div>
-        <Button onClick={() => signIn("discord")}>
-          <>Log In</>
-        </Button>
         <Button type="button" onClick={() => router.push("/donate")}>
           <>Donate now</>
+        </Button>
+        <Button
+          onClick={() =>
+            sessionData ? router.push("/app") : signIn("discord")
+          }
+        >
+          <>{sessionData ? "Dashboard" : "Log In"}</>
         </Button>
       </div>
     </div>
   );
 };
 
-const Home: NextPage & { auth: boolean } = () => {
+const Home = () => {
+  const { data: sessionData } = useSession();
   return (
     <>
       <Seo />
 
       <main className=" relative grid h-screen w-full place-items-center overflow-hidden bg-[#070707]">
-        <Header />
+        <Header sessionData={sessionData} />
         <Image
           width={1640}
           height={1024}
@@ -78,7 +83,7 @@ const Home: NextPage & { auth: boolean } = () => {
   );
 };
 
-Home.auth = true;
+Home.auth = false;
 
 export default Home;
 

@@ -75,7 +75,7 @@ model Photo {
   user         InternalUser  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   collectionId String?       @db.ObjectId
   collection   Collection?   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  url          String?       @unique
+  url          String        @unique
   nsfw         Boolean?
   prompt       String
   tags         String[]

@@ -1,4 +1,4 @@
-import { buffer } from "micro";
+import { buffer } from "micro"; //TODO replace with react query
 import Cors from "micro-cors";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
