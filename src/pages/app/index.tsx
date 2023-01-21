@@ -9,6 +9,8 @@ type ImageCardType = {
   photo?: Photo;
 };
 const ImageCard = ({ loading, photo }: ImageCardType) => {
+  console.log(photo);
+  const [liked, setLiked] = React.useState(false);
   if (loading || !photo) {
     return (
       <div
@@ -31,14 +33,30 @@ const ImageCard = ({ loading, photo }: ImageCardType) => {
     );
   }
   return (
-    <>
-      <div
-        key={photo.id}
-        className="relative aspect-square w-full overflow-hidden rounded-xl"
-      >
+    <div className="flex w-full flex-col" key={photo.id}>
+      <div className="relative aspect-square w-full overflow-hidden rounded-xl">
         <Image src={photo.url} fill alt={photo.prompt} />
       </div>
-    </>
+      <div className="flex w-full justify-between">
+        <div
+          onClick={() => {
+            setLiked(!liked);
+          }}
+          className={`group flex cursor-pointer items-center `}
+        >
+          <div
+            className={`${liked && ""}  ${
+              liked
+                ? "animate-heart-burst [background-position:right]"
+                : "[background-position:left]"
+            } ml-[-16px] mt-[1px] h-12 w-12 bg-no-repeat [background-image:url('https://abs.twimg.com/a/1446542199/img/t1/web_heart_animation.png')]  [background-size:2900%] group-hover:[background-position:right]`}
+          />
+          <p className="ml-[-10px] text-[14px] text-gray-400 group-hover:text-red-400">
+            {photo.likes}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -53,6 +71,7 @@ function shuffle<T>(array: Array<T>) {
     currentIndex--;
 
     // And swap it with the current element.
+    //TODO why is this typescript error?
     [array[currentIndex], array[randomIndex]] = [
       array[randomIndex],
       array[currentIndex],
@@ -63,8 +82,9 @@ function shuffle<T>(array: Array<T>) {
 }
 
 const index = () => {
-  const getPopularPhotos = api.photos.getMostLikedPhotos.useQuery({});
-  console.log(getPopularPhotos);
+  const getPopularPhotos = api.photos.getMostLikedPhotos.useQuery({
+    limit: 16,
+  });
 
   return (
     <main className="bg-[#070707] px-5 text-white">
@@ -76,17 +96,15 @@ const index = () => {
               Most liked generations
             </p>
           </div>
-          <div className="w-full columns-1 gap-10 space-y-10 sm:columns-2 md:columns-3 lg:columns-4">
+          <div className="w-full columns-1 gap-10 space-y-6 sm:columns-2 md:columns-3 lg:columns-4">
             {getPopularPhotos.data &&
-              shuffle(getPopularPhotos.data.data)
-                .slice(0, 12)
-                .map((photo) => (
-                  <ImageCard
-                    key={photo.id}
-                    loading={getPopularPhotos.isLoading}
-                    photo={photo}
-                  />
-                ))}
+              shuffle(getPopularPhotos.data.data.slice(0, 12)).map((photo) => (
+                <ImageCard
+                  key={photo.id}
+                  loading={getPopularPhotos.isLoading}
+                  photo={photo}
+                />
+              ))}
           </div>
         </div>
       </section>

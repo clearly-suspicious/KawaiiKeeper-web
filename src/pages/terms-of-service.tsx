@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import Link from "next/link";
 
 const TermsOfService: NextPage = () => {
   return (
@@ -65,7 +66,8 @@ const TermsOfService: NextPage = () => {
       <h1>What about my privacy?</h1>
       <p>
         Kawaii Keeper takes the privacy of its users very seriously. For the
-        current Privacy Policy, please <a href="/privacy-policy">click here</a>.
+        current Privacy Policy, please
+        <Link href="/privacy-policy">click here</Link>.
       </p>
       <p>
         The Children’s Online Privacy Protection Act (“COPPA”) requires that
