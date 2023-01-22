@@ -27,7 +27,7 @@ const CheckoutForm = () => {
       cart: [
         {
           name: "Support Kawaii Keeper",
-          price: 100,
+          price: input.customDonation,
         },
       ],
     });
