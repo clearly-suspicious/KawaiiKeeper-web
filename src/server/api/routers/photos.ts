@@ -28,13 +28,16 @@ export const photosRouter = router({
     .query(async ({ ctx, input }) => {
       const take = input.limit ?? 25;
       const skip = input.cursor ? 1 : 0; //skip cursor if it exists
-
+      console.log(ctx.user.id);
       const photos = await ctx.prisma.photo.findMany({
         take,
         skip,
         cursor: input.cursor ? { id: input.cursor } : undefined,
         orderBy: {
           likes: "desc",
+        },
+        include: {
+          interactions: { where: { type: "LIKE", userId: ctx.user.id } },
         },
       });
       const lastPhoto = photos[photos.length - 1];

@@ -1,4 +1,4 @@
-import { Photo } from "@prisma/client";
+import { Interaction, Photo } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 
@@ -6,11 +6,12 @@ import { api } from "../../utils/api";
 
 type ImageCardType = {
   loading: boolean;
-  photo?: Photo;
+  photo?: Photo & { interactions: Interaction[] };
 };
 const ImageCard = ({ loading, photo }: ImageCardType) => {
-  console.log(photo);
-  const [liked, setLiked] = React.useState(false);
+  console.log(photo?.interactions);
+  const isIlikedByCurrentUser = photo?.interactions.length !== 0;
+  const [liked, setLiked] = React.useState(isIlikedByCurrentUser);
   if (loading || !photo) {
     return (
       <div
@@ -60,9 +61,9 @@ const ImageCard = ({ loading, photo }: ImageCardType) => {
   );
 };
 
-function shuffle<T>(array: Array<T>) {
-  let currentIndex = array.length,
-    randomIndex;
+function shuffle(array: any[]) {
+  let currentIndex = array.length;
+  let randomIndex: number;
 
   // While there remain elements to shuffle.
   while (currentIndex != 0) {
@@ -71,7 +72,7 @@ function shuffle<T>(array: Array<T>) {
     currentIndex--;
 
     // And swap it with the current element.
-    //TODO why is this typescript error?
+
     [array[currentIndex], array[randomIndex]] = [
       array[randomIndex],
       array[currentIndex],
