@@ -21,10 +21,13 @@ const ResultPage: NextPage = () => {
 
   return (
     <div className="container mx-auto text-white">
-      <h1>Checkout Payment Result</h1>
-      <h2>Status: {data?.payment_intent?.status ?? "loading..."}</h2>
-      <h3>CheckoutSession response:</h3>
-      <PrintObject content={data ?? "loading..."} />
+      <div className="prose prose-invert">
+        <h1 className="pt-4 text-emerald-300">Checkout Payment Result</h1>
+        <h2 className="text-emerald-300">
+          Status: {data?.payment_intent?.status ?? "loading..."}
+        </h2>
+      </div>
+      {data && <PrintObject content={data} />}
     </div>
   );
 };

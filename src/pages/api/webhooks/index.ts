@@ -2,6 +2,9 @@ import { buffer } from "micro"; //TODO replace with react query
 import Cors from "micro-cors";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
+
+import { prisma } from "../../../server/db";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // https://github.com/stripe/stripe-node#configuration
   apiVersion: "2022-11-15",
@@ -57,6 +60,15 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     } else if (event.type === "charge.succeeded") {
       const charge = event.data.object as Stripe.Charge;
       console.log(`💵 Charge id: ${charge.id}`);
+      const relax = event.data.object as Stripe.Charge;
+      console.log("relax: ", relax);
+      await prisma.payments.create({
+        data: {
+          name: relax.billing_details.name as string,
+          emailId: relax.billing_details.email as string,
+          amount: (relax.amount as number) / 100,
+        },
+      });
     } else {
       console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
     }

@@ -131,6 +131,14 @@ model SupportRequests {
   concern   String
 }
 
+model Payments {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  name      String
+  emailId   String
+  amount    Int
+}
+
 enum Role {
   ADMIN
   USER

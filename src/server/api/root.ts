@@ -1,5 +1,6 @@
 import { apiKeysRouter } from "./routers/apiKey";
 import { collectionsRouter } from "./routers/collections";
+import { paymentsRouter } from "./routers/payments";
 import { photosRouter } from "./routers/photos";
 import { supportRouter } from "./routers/support";
 import { mergeRouters, router } from "./trpc";
@@ -15,6 +16,7 @@ export const appRouter = mergeRouters(
     photos: photosRouter,
     collections: collectionsRouter,
     support: supportRouter,
+    payments: paymentsRouter
   })
 );
 
