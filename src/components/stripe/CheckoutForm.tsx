@@ -24,7 +24,12 @@ const CheckoutForm = () => {
     setLoading(true);
     // Create a Checkout Session.
     const response = await fetchPostJSON("/api/checkout_sessions", {
-      amount: input.customDonation,
+      cart: [
+        {
+          name: "Support Kawaii Keeper",
+          price: 100,
+        },
+      ],
     });
 
     if (response.statusCode === 500) {

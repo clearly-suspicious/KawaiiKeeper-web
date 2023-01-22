@@ -20,7 +20,7 @@ const ResultPage: NextPage = () => {
   if (error) return <div>failed to load</div>;
 
   return (
-    <div className="page-container">
+    <div className="container mx-auto text-white">
       <h1>Checkout Payment Result</h1>
       <h2>Status: {data?.payment_intent?.status ?? "loading..."}</h2>
       <h3>CheckoutSession response:</h3>
