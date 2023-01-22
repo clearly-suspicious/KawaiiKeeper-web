@@ -9,7 +9,6 @@ type ImageCardType = {
   photo?: Photo & { interactions: Interaction[] };
 };
 const ImageCard = ({ loading, photo }: ImageCardType) => {
-  console.log(photo?.interactions);
   const isIlikedByCurrentUser = photo?.interactions.length !== 0;
   const [liked, setLiked] = React.useState(isIlikedByCurrentUser);
   if (loading || !photo) {
@@ -36,7 +35,7 @@ const ImageCard = ({ loading, photo }: ImageCardType) => {
   return (
     <div className="flex w-full flex-col" key={photo.id}>
       <div className="relative aspect-square w-full overflow-hidden rounded-xl">
-        <Image src={photo.url} fill alt={photo.prompt} />
+        <Image src={photo.url as string} fill alt={photo.prompt} />
       </div>
       <div className="flex w-full justify-between">
         <div
