@@ -58,7 +58,7 @@ const TermsOfService: NextPage = () => {
         located at https://kawaiikeeper.vercel.app/, or the official server.
       </p>
       <p>
-        If you don’t agree with the new Terms, you are free to reject them;
+        If you don&apos;t agree with the new Terms, you are free to reject them;
         unfortunately, that means you will no longer be able to use the
         Services. If you use the Services in any way after a change to the Terms
         is effective, that means you agree to all of the changes.
@@ -70,7 +70,7 @@ const TermsOfService: NextPage = () => {
         <Link href="/privacy-policy">click here</Link>.
       </p>
       <p>
-        The Children’s Online Privacy Protection Act (“COPPA”) requires that
+        The Children&apos;s Online Privacy Protection Act (“COPPA”) requires that
         online service providers obtain parental consent before they knowingly
         collect personally identifiable information online from children who are
         under thirteen (13). We do not knowingly collect or solicit personally
@@ -95,7 +95,7 @@ const TermsOfService: NextPage = () => {
         but will not store your password. You promise to provide us with
         accurate, complete, and updated registration information about yourself.
         You may not use any Third Party Account that you do not have the right
-        to use, or another person’s account credentials without authorization
+        to use, or another person&apos;s account credentials without authorization
         from that other person. You may not transfer your account to anyone else
         without our prior written permission.
       </p>
@@ -104,13 +104,13 @@ const TermsOfService: NextPage = () => {
         non-commercial use, and not on behalf of or for the benefit of any third
         party or any entity, and only in a manner that complies with all laws
         that apply to you. If your use of the Services is prohibited by
-        applicable laws, then you aren’t authorized to use the Services. We
-        can’t and won’t be responsible for your using the Services in a way that
+        applicable laws, then you aren&apos;t authorized to use the Services. We
+        can&apos;t and won&apos;t be responsible for your using the Services in a way that
         breaks the law.
       </p>
       <p>
         You must protect the security of your Third Party Account credentials
-        and password and any other access tools or credentials. You’re
+        and password and any other access tools or credentials. You&apos;re
         responsible for any activity associated with your account.
       </p>
       <h1>Punishable Acts</h1>
@@ -143,7 +143,7 @@ const TermsOfService: NextPage = () => {
         What if I see something on the services that infringes my copyright?
       </h1>
       <p>
-        We respect others’ intellectual property rights, and we reserve the
+        We respect others&apos; intellectual property rights, and we reserve the
         right to delete or disable Content alleged to be infringing, or provide
         content credit on the platform up on agreement of both parties.
       </p>
@@ -153,7 +153,7 @@ const TermsOfService: NextPage = () => {
       </p>
       <h1>What if I want to stop using the services?</h1>
       <p>
-        You’re free to do that at any time by contacting us on the official
+        You&apos;re free to do that at any time by contacting us on the official
         Kawaii Keeper Server or reach out to us through the support page. If you
         are an administrator, you may disconnect the Service from your server at
         any time. Account termination may result in destruction of any Content
