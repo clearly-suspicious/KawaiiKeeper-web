@@ -26,12 +26,12 @@ const Button = ({ children, className, ...rest }: ButtonProps) => {
   );
 };
 
-const Header = ({ sessionData }: { sessionData?: Session | null }) => {
+export const Header = ({ sessionData }: { sessionData?: Session | null }) => {
   const router = useRouter();
   return (
     <div className="fixed top-0 my-6 flex w-full items-center justify-between px-5 text-white lg:my-12 lg:px-14">
       <div className="text-[18px] lg:text-[24px]">KawaiiKeeper</div>
-      <div>
+      <div className="flex items-center gap-4">
         <Button type="button" onClick={() => router.push("/donate")}>
           <>Donate now</>
         </Button>
@@ -42,6 +42,21 @@ const Header = ({ sessionData }: { sessionData?: Session | null }) => {
         >
           <>{sessionData ? "Dashboard" : "Log In"}</>
         </Button>
+        {sessionData && (
+          <button
+            type="button"
+            onClick={() => router.push("/profile")}
+            className="relative h-12 w-12"
+          >
+            <Image
+              width={1200}
+              height={800}
+              src={sessionData.user?.image as string}
+              alt="avatar"
+              className="rounded-full border border-gray-100 shadow-sm"
+            />
+          </button>
+        )}
       </div>
     </div>
   );
