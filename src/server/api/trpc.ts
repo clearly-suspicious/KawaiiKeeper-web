@@ -110,11 +110,12 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
     // Get the session from the server using the unstable_getServerSession wrapper function
 
     authedUser = await getUserFromSession({ session, req });
-    user = await prisma.internalUser.findUnique({
-      where: {
-        discordId: authedUser?.discordId as string,
-      },
-    });
+    if (authedUser)
+      user = await prisma.internalUser.findUnique({
+        where: {
+          discordId: authedUser?.discordId as string,
+        },
+      });
   }
 
   return {
