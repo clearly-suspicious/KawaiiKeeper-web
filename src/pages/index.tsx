@@ -52,7 +52,7 @@ const Home = () => {
         rightButtons={[
           sessionData ? (
             <Button key={1} onClick={() => router.push("/app")}>
-              <> "Go to App" </>
+              <> Go to App </>
             </Button>
           ) : (
             <></>
@@ -76,7 +76,7 @@ const Home = () => {
             </div> */}
         </div>
       </main>
-      <div className="absolute inset-0 -z-[5] [background:linear-gradient(180deg,#000000_38%,rgba(0,0,0,0)_123.46%)]" />
+      <div className="absolute inset-0 -z-[5] [background:linear-gradient(180deg,#000000_38%,rgba(0,0,0,0)_128%)]" />
       {getPopularPhotos.data ? (
         <div
           className="perps absolute inset-0 -z-10 h-screen max-h-screen overflow-hidden"
@@ -85,7 +85,7 @@ const Home = () => {
           <div
             className="absolute right-[50%] top-[50%] w-[240vw] columns-5 gap-4 md:w-[180vw] lg:w-[120vw] xl:gap-8" //the gap here should be same as space-y-[] in ImageColumn
             style={{
-              transform: "translateX(50%) translateY(-50%) rotateX(32deg)",
+              transform: "translateX(50%) translateY(-50%) rotateX(36deg)",
             }}
           >
             <ImageColumn offset start={0} end={6} />
