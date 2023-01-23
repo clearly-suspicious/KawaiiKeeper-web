@@ -1,12 +1,12 @@
 import { Photo } from "@prisma/client";
 import { z } from "zod";
 
-import { protectedProcedure, router } from "./../trpc";
+import { protectedProcedure, publicProcedure, router } from "./../trpc";
 
 export const interactionTypeEnum = z.enum(["LIKE", "UNLIKE"]);
 
 export const photosRouter = router({
-  getMostLikedPhotos: protectedProcedure
+  getMostLikedPhotos: publicProcedure
     .meta({ openapi: { method: "GET", path: "/photo/most-liked" } })
     .input(
       z.object({
@@ -28,7 +28,7 @@ export const photosRouter = router({
     .query(async ({ ctx, input }) => {
       const take = input.limit ?? 25;
       const skip = input.cursor ? 1 : 0; //skip cursor if it exists
-      console.log(ctx.user.id);
+
       const photos = await ctx.prisma.photo.findMany({
         take,
         skip,
@@ -36,9 +36,12 @@ export const photosRouter = router({
         orderBy: {
           likes: "desc",
         },
-        include: {
-          interactions: { where: { type: "LIKE", userId: ctx.user.id } },
-        },
+        // if logged in get the  user's interactions with the photos so we can display their like status
+        include: ctx.user
+          ? {
+              interactions: { where: { type: "LIKE", userId: ctx.user.id } },
+            }
+          : undefined,
       });
       const lastPhoto = photos[photos.length - 1];
       const nextCursor = lastPhoto ? lastPhoto.id : undefined;

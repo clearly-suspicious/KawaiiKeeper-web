@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-import { protectedProcedure, router } from "./../trpc";
+import { publicProcedure, router } from "./../trpc";
 
 export const paymentsRouter = router({
-  aggregateDonations: protectedProcedure
+  aggregateDonations: publicProcedure
     .output(z.number())
     .query(async ({ ctx }) => {
       const aggregations = await ctx.prisma.payments.aggregate({

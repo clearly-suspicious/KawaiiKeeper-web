@@ -67,7 +67,7 @@ const Home = () => {
           </h1>
 
           <a href="https://discord.com/api/oauth2/authorize?client_id=1054881371472015370&permissions=8&scope=bot%20applications.commands">
-            <Button className="px-6 text-[18px] lg:px-12 lg:py-4 lg:text-[20px]">
+            <Button className=" border-gray-200 px-6 text-[18px] lg:px-12 lg:py-4 lg:text-[20px]">
               Invite to discord
             </Button>
           </a>
@@ -77,7 +77,7 @@ const Home = () => {
             </div> */}
         </div>
       </main>
-      <div className="absolute inset-0 -z-[5] [background:linear-gradient(180deg,#000000_31.44%,rgba(0,0,0,0)_123.46%)]" />
+      <div className="absolute inset-0 -z-[5] [background:linear-gradient(180deg,#000000_38%,rgba(0,0,0,0)_123.46%)]" />
       {getPopularPhotos.data ? (
         <div
           className="perps absolute inset-0 -z-10 h-screen max-h-screen overflow-hidden"
