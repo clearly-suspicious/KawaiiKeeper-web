@@ -50,14 +50,13 @@ const Home = () => {
       <Header
         sessionData={sessionData}
         rightButtons={[
-          <Button
-            key={1}
-            onClick={() =>
-              sessionData ? router.push("/app") : signIn("discord")
-            }
-          >
-            <>{sessionData ? "Go to App" : "Log In"}</>
-          </Button>,
+          sessionData ? (
+            <Button key={1} onClick={() => router.push("/app")}>
+              <> "Go to App" </>
+            </Button>
+          ) : (
+            <></>
+          ),
         ]}
       />
       <main className=" relative grid w-full place-items-center overflow-hidden ">
