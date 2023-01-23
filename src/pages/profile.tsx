@@ -2,7 +2,7 @@ import { NextPage } from "next";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 
-import { Header } from ".";
+import Header from "../components/Header";
 import ImageCard from "../components/ImageCard";
 import { api } from "../utils/api";
 

@@ -9,7 +9,7 @@ type Props = {
 const PrintObject = ({ content }: Props) => {
   // const formattedContent: string = JSON.stringify(content, null, 2);
   const GOAL_AMOUNT = 5000;
-  const totalDonates = api.payments.aggregateDonations.useQuery();
+  const totalDonated = api.payments.aggregateDonations.useQuery();
 
   return (
     <>
@@ -33,11 +33,11 @@ const PrintObject = ({ content }: Props) => {
         <div
           className="rounded-full bg-blue-600 p-0.5 text-center text-xs font-medium leading-none text-blue-100"
           style={{
-            width: `${((totalDonates.data ?? 0) / GOAL_AMOUNT) * 100}%`,
+            width: `${((totalDonated.data ?? 0) / GOAL_AMOUNT) * 100}%`,
           }}
         >
-          {Math.round(((totalDonates.data ?? 0) / GOAL_AMOUNT) * 100)} % (
-          {totalDonates.data}$/{GOAL_AMOUNT}$)
+          {Math.round(((totalDonated.data ?? 0) / GOAL_AMOUNT) * 100)} % (
+          {totalDonated.data}$/{GOAL_AMOUNT}$)
         </div>
       </div>
       {/* <pre>{formattedContent}</pre> */}

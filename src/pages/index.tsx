@@ -1,99 +1,104 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { type Session } from "next-auth";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { twMerge } from "tailwind-merge";
 
+import Button from "../components/Button";
+import Header from "../components/Header";
 import Seo from "../components/Seo";
-
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: React.ReactNode;
-  className?: string;
-};
-const Button = ({ children, className, ...rest }: ButtonProps) => {
-  return (
-    <button
-      className={twMerge(
-        "relative rounded-[36px] bg-gradient-to-b from-[#BDBDBD] to-transparent text-[14px] font-[300] text-[#D8D8D8] lg:text-[18px]",
-        className
-      )}
-      {...rest}
-    >
-      <div className="m-[1px] h-full w-full rounded-[36px] bg-[#070707] py-4 px-10 lg:px-12">
-        {children}
-      </div>
-    </button>
-  );
-};
-
-export const Header = ({ sessionData }: { sessionData?: Session | null }) => {
-  const router = useRouter();
-  return (
-    <div className="fixed top-0 my-6 flex w-full items-center justify-between px-5 text-white lg:my-12 lg:px-14">
-      <div className="text-[18px] lg:text-[24px]">KawaiiKeeper</div>
-      <div className="flex items-center gap-4">
-        <Button type="button" onClick={() => router.push("/donate")}>
-          <>Donate now</>
-        </Button>
-        <Button
-          onClick={() =>
-            sessionData ? router.push("/app") : signIn("discord")
-          }
-        >
-          <>{sessionData ? "Dashboard" : "Log In"}</>
-        </Button>
-        {sessionData && (
-          <button
-            type="button"
-            onClick={() => router.push("/profile")}
-            className="relative h-12 w-12"
-          >
-            <Image
-              width={1200}
-              height={800}
-              src={sessionData.user?.image as string}
-              alt="avatar"
-              className="rounded-full border border-gray-100 shadow-sm"
-            />
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+import { api } from "../utils/api";
+import { shuffle } from "../utils/helpers";
 
 const Home = () => {
   const { data: sessionData } = useSession();
+  const getPopularPhotos = api.photos.getMostLikedPhotos.useQuery({
+    limit: 30,
+  });
+  const router = useRouter();
+
+  const ImageColumn = ({
+    start,
+    end,
+    offset = false,
+  }: {
+    start: number;
+    end: number;
+    offset?: boolean;
+  }) => {
+    return (
+      <div
+        className={`${
+          offset
+            ? "translate-y-[-80px] md:translate-y-[-120px] xl:translate-y-[-256px]"
+            : ""
+        } flex flex-col space-y-4 xl:space-y-8`}
+      >
+        {getPopularPhotos.data &&
+          shuffle(getPopularPhotos.data.data.slice(start, end)).map((photo) => (
+            <div
+              key={photo.id}
+              className="relative aspect-square w-full overflow-hidden"
+            >
+              <Image src={photo.url as string} fill alt={photo.prompt} />
+            </div>
+          ))}
+      </div>
+    );
+  };
   return (
     <>
       <Seo />
+      <Header
+        sessionData={sessionData}
+        rightButtons={[
+          <Button
+            key={1}
+            onClick={() =>
+              sessionData ? router.push("/app") : signIn("discord")
+            }
+          >
+            <>{sessionData ? "Go to App" : "Log In"}</>
+          </Button>,
+        ]}
+      />
+      <main className=" relative grid w-full place-items-center overflow-hidden ">
+        <div className="container flex w-full flex-col items-center justify-end gap-12 px-4 py-8 lg:py-20 ">
+          <h1 className="max-w-[640px] bg-gradient-to-b from-[#FFFFFFFF] to-[#ececec69] bg-clip-text text-center text-[48px] font-[500] capitalize leading-[105.52%] tracking-[-0.025em] [text-fill-color:transparent] [-webkit-text-fill-color:transparent] [-webkit-background-clip:_text] lg:max-w-[1024px] lg:text-[84px]">
+            Generate your favorite anime characters
+          </h1>
 
-      <main className=" relative grid h-screen w-full place-items-center overflow-hidden bg-[#070707]">
-        <Header sessionData={sessionData} />
-        <Image
-          width={1640}
-          height={1024}
-          src="/images/light.png"
-          alt="background"
-          className="pointer-events-none absolute top-36"
-        />
-        <div className="pointer-events-auto z-10">
-          <div className="container flex min-h-screen w-full flex-col items-center justify-end gap-12 px-4 py-24 ">
-            <h1 className="max-w-[728px] bg-gradient-to-b from-[#FFFFFFD9] to-[#ECECEC3D] bg-clip-text text-center text-[48px] font-[500] leading-[105.52%] tracking-[-0.025em] [text-fill-color:transparent] [-webkit-text-fill-color:transparent] [-webkit-background-clip:_text] lg:text-[64px]">
-              Generate your favorite anime characters
-            </h1>
+          <a href="https://discord.com/api/oauth2/authorize?client_id=1054881371472015370&permissions=8&scope=bot%20applications.commands">
+            <Button className="px-6 text-[18px] lg:px-12 lg:py-4 lg:text-[20px]">
+              Invite to discord
+            </Button>
+          </a>
 
-            <a href="https://discord.com/api/oauth2/authorize?client_id=1054881371472015370&permissions=8&scope=bot%20applications.commands">
-              <Button className="text-[18px] lg:text-[26px]">
-                Invite to discord
-              </Button>
-            </a>
-            {/* <div className="flex flex-col items-center gap-2">
+          {/* <div className="flex flex-col items-center gap-2">
               <AuthShowcase />
             </div> */}
-          </div>
         </div>
       </main>
+      <div className="absolute inset-0 -z-[5] [background:linear-gradient(180deg,#000000_31.44%,rgba(0,0,0,0)_123.46%)]" />
+      {getPopularPhotos.data ? (
+        <div
+          className="perps absolute inset-0 -z-10 h-screen max-h-screen overflow-hidden"
+          style={{ perspective: "1000px" }}
+        >
+          <div
+            className="absolute right-[50%] top-[50%] w-[240vw] columns-5 gap-4 md:w-[180vw] lg:w-[120vw] xl:gap-8" //the gap here should be same as space-y-[] in ImageColumn
+            style={{
+              transform: "translateX(50%) translateY(-50%) rotateX(32deg)",
+            }}
+          >
+            <ImageColumn offset start={0} end={6} />
+            <ImageColumn start={6} end={12} />
+            <ImageColumn offset start={12} end={18} />
+            <ImageColumn start={18} end={24} />
+            <ImageColumn offset start={24} end={30} />
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
