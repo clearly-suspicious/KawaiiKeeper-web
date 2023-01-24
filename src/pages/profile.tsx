@@ -1,7 +1,9 @@
 import { NextPage } from "next";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
+import Button from "../components/Button";
 import Header from "../components/Header";
 import ImageCard from "../components/ImageCard";
 import Tabs from "../components/Tabs";
@@ -9,13 +11,25 @@ import { api } from "../utils/api";
 
 const Profile: NextPage = () => {
   const { data: sessionData } = useSession();
+  const router = useRouter();
   const userPhotos = api.photos.getPhotosByUser.useQuery({ limit: 12 });
   const userCollections = api.collections.getCollectionsByUser.useQuery();
   const createCollection = api.collections.insertNewCollection.useMutation();
 
   return (
     <>
-      <Header sessionData={sessionData} />
+      <Header
+        sessionData={sessionData}
+        rightButtons={[
+          sessionData ? (
+            <Button key={1} onClick={() => router.push("/app")}>
+              <> Go to App </>
+            </Button>
+          ) : (
+            <></>
+          ),
+        ]}
+      />
       <main className="relative grid w-full place-items-center overflow-hidden bg-[#070707] px-5">
         <section className="container mx-auto flex min-h-screen w-full flex-col py-12 ">
           <div className=" w-full">
@@ -100,5 +114,7 @@ const Profile: NextPage = () => {
     </>
   );
 };
+
+Profile.auth = true;
 
 export default Profile;
