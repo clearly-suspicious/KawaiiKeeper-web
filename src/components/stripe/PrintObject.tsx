@@ -25,7 +25,10 @@ const PrintObject = ({ content }: Props) => {
           <span className="text-red-400">
             {content.customer_details?.name}.
           </span>{" "}
-          Every bit helps!
+          Your donation is an investment in our community's passion for anime.
+          Your support helps KawaiiKeeper to continue to bring new and
+          innovative features, making it the best it can be. We can't thank you
+          enough for your generosity.
         </p>
       </div>
       <h1> OUR GOAL: </h1>

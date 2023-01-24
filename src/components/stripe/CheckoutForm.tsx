@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import CustomDonationInput from "./CustomDonationInput";
-import StripeTestCards from "./StripeTestCards";
 import * as config from "../../stripe-config";
 import { fetchPostJSON } from "../../utils/api-helpers";
 import getStripe from "../../utils/get-stripejs";
@@ -53,26 +52,35 @@ const CheckoutForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <CustomDonationInput
-        className="checkout-style"
-        name="customDonation"
-        value={input.customDonation}
-        min={config.MIN_AMOUNT}
-        max={config.MAX_AMOUNT}
-        step={config.AMOUNT_STEP}
-        currency={config.CURRENCY}
-        onChange={handleInputChange}
-      />
-      <StripeTestCards />
-      <button
-        className="checkout-style-background"
-        type="submit"
-        disabled={loading}
-      >
-        Donate {formatAmountForDisplay(input.customDonation, config.CURRENCY)}
-      </button>
-    </form>
+    <>
+      <main className="bg-[#070707] px-5 text-white">
+        <section className="container mx-auto flex min-h-screen w-full flex-col py-12 ">
+          <div className=" w-full">
+            <form onSubmit={handleSubmit}>
+              <CustomDonationInput
+                className="checkout-style block rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-black text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                name="customDonation"
+                value={input.customDonation}
+                min={config.MIN_AMOUNT}
+                max={config.MAX_AMOUNT}
+                step={config.AMOUNT_STEP}
+                currency={config.CURRENCY}
+                onChange={handleInputChange}
+              />
+              {/* <StripeTestCards /> */}
+              <button
+                className="checkout-style-background"
+                type="submit"
+                disabled={loading}
+              >
+                Donate{" "}
+                {formatAmountForDisplay(input.customDonation, config.CURRENCY)}
+              </button>
+            </form>
+          </div>
+        </section>
+      </main>
+    </>
   );
 };
 

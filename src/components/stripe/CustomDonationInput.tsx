@@ -23,9 +23,11 @@ const CustomDonationInput = ({
   onChange,
   className,
 }: Props) => (
-  <label>
-    Custom donation amount ({formatAmountForDisplay(min, currency)}-
-    {formatAmountForDisplay(max, currency)}):
+  <>
+    <label className="mb-2 block text-sm text-[22px] font-medium font-bold text-gray-900 dark:text-white">
+      Custom donation amount ({formatAmountForDisplay(min, currency)}-
+      {formatAmountForDisplay(max, currency)}):
+    </label>
     <input
       className={className}
       type="number"
@@ -37,6 +39,7 @@ const CustomDonationInput = ({
       onChange={onChange}
     ></input>
     <input
+      className="cursor-pointer"
       type="range"
       name={name}
       value={value}
@@ -45,7 +48,7 @@ const CustomDonationInput = ({
       step={step}
       onChange={onChange}
     ></input>
-  </label>
+  </>
 );
 
 export default CustomDonationInput;

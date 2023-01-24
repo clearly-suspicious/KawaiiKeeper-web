@@ -8,7 +8,7 @@ import { api } from "../utils/api";
 
 const Profile: NextPage = () => {
   const { data: sessionData } = useSession();
-  const userPhotos = api.photos.getPhotosByUser.useQuery({ limit: 4 });
+  const userPhotos = api.photos.getPhotosByUser.useQuery({ limit: 12 });
   const userCollections = api.collections.getCollectionsByUser.useQuery();
   const createCollection = api.collections.insertNewCollection.useMutation();
 
