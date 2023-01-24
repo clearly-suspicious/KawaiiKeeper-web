@@ -30,7 +30,7 @@ const Profile: NextPage = () => {
                       <>
                         <div className="flex items-center space-x-2">
                           <span>Generations</span>
-                          <span className="rounded-lg bg-pink-300 py-0.5 px-1 text-black ">
+                          <span className="min-w-[24px] rounded-lg bg-pink-300 py-0.5 px-1 text-black">
                             {userPhotos.data ? userPhotos.data.data.length : 0}
                           </span>
                         </div>
@@ -52,7 +52,18 @@ const Profile: NextPage = () => {
                     ),
                   },
                   {
-                    title: "Collections",
+                    title: (
+                      <>
+                        <div className="flex items-center space-x-2">
+                          <span>Collections</span>
+                          <span className="min-w-[24px] rounded-lg bg-blue-300 py-0.5 px-1 text-black">
+                            {userCollections.data
+                              ? userCollections.data.length
+                              : 0}
+                          </span>
+                        </div>
+                      </>
+                    ),
                     value: "tab2",
                     content: (
                       <>
