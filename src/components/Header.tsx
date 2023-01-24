@@ -80,7 +80,7 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
   const totalDonated = api.payments.aggregateDonations.useQuery();
 
   return (
-    <div className="w-full px-5 lg:px-12">
+    <div className="w-full px-5 xl:px-12">
       <div className="mt-2 flex items-center  justify-between py-6 text-white lg:py-6">
         <Link href="/">
           <div className="text-[18px] lg:text-[24px]">KawaiiKeeper</div>
