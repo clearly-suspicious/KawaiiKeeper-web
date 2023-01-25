@@ -150,45 +150,51 @@ export const photosRouter = router({
     .meta({ openapi: { method: "PATCH", path: "/photo/{interaction}" } })
     .input(
       z.object({
-        url: z.string(),
+        url: z.string().optional(),
+        id: z.string().optional(),
         interaction: interactionTypeEnum,
       })
     )
     .output(z.custom<Photo>().nullable())
     .mutation(async ({ ctx, input }) => {
-      console.log(input);
-      const url = decodeURIComponent(input.url);
+      if (!input.url && !input.id) return null;
+      let photoId = input.id ?? null;
       const interactionType = input.interaction.toUpperCase();
+      if (input.url) {
+        const url = decodeURIComponent(input.url);
 
-      const photo = await ctx.prisma.photo.findFirst({
-        where: {
-          url,
-        },
-      });
+        const photo = await ctx.prisma.photo.findFirst({
+          where: {
+            url,
+          },
+        });
 
-      if (!photo) return null;
+        if (photo) photoId = photo.id;
+      }
+      if (!photoId) return null;
 
       if (interactionType === "UNLIKE") {
         const deletedLikes = await ctx.prisma.interaction.deleteMany({
           where: {
-            photoId: photo.id,
+            photoId,
             userId: ctx.user.id,
             type: "LIKE",
           },
         });
         return await ctx.prisma.photo.update({
-          where: {
-            url,
-          },
+          where: input.url
+            ? { url: decodeURIComponent(input.url) }
+            : { id: photoId },
+
           data: {
             likes: { decrement: deletedLikes.count },
           },
         });
       } else if (interactionType === "LIKE") {
         return await ctx.prisma.photo.update({
-          where: {
-            url,
-          },
+          where: input.url
+            ? { url: decodeURIComponent(input.url) }
+            : { id: photoId },
           data: {
             interactions: {
               create: {

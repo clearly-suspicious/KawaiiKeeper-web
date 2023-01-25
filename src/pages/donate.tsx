@@ -18,9 +18,10 @@ const Donate: NextPage = () => {
               </h1>
               <p className="text-[18px] font-semibold text-gray-500">
                 Your support for us through donations allows Kawaii Keeper to
-                continue to improve and enhance our bot for everyone to enjoy.
-                Your contribution is greatly appreciated and helps keep the bot
-                running. Thank you for considering a donation.
+                keep running and continue to improve for everyone to enjoy. We
+                haven't decided on the rewards yet but for now we will add an
+                equivalent amount of tokens to your account in return for your
+                support! Thank you for considering a donation.
               </p>
               <CheckoutForm />
             </div>

@@ -64,6 +64,12 @@ const ImageCard = ({ loading, photo, collections }: ImageCardType) => {
       },
     });
 
+  const likeMutation = api.photos.likePhoto.useMutation({
+    onSuccess: (input) => {
+      utils.photos.invalidate();
+    },
+  });
+
   if (loading || !photo) {
     return (
       <div
@@ -96,6 +102,18 @@ const ImageCard = ({ loading, photo, collections }: ImageCardType) => {
       <div className="flex w-full items-center justify-between">
         <div
           onClick={() => {
+            if (!liked) {
+              likeMutation.mutate({
+                id: photo.id,
+                interaction: "LIKE",
+              });
+            } else {
+              likeMutation.mutate({
+                id: photo.id,
+                interaction: "UNLIKE",
+              });
+            }
+
             setLiked(!liked);
           }}
           className="group  flex cursor-pointer items-center"
@@ -127,32 +145,34 @@ const ImageCard = ({ loading, photo, collections }: ImageCardType) => {
           </p>
         </div>
 
-        <button
-          className="group"
-          onClick={() => {
-            if (collections && collections[0]) {
-              if (saved) {
-                removePhotoMutation.mutate({
-                  photoId: photo.id,
-                  collectionId: collections[0].id,
-                });
-              } else {
-                savePhotoMutation.mutate({
-                  photoId: photo.id,
-                  collectionId: collections[0].id,
-                });
-              }
+        {collections && (
+          <button
+            className="group"
+            onClick={() => {
+              if (collections[0]) {
+                if (saved) {
+                  removePhotoMutation.mutate({
+                    photoId: photo.id,
+                    collectionId: collections[0].id,
+                  });
+                } else {
+                  savePhotoMutation.mutate({
+                    photoId: photo.id,
+                    collectionId: collections[0].id,
+                  });
+                }
 
-              setSaved((saved) => !saved);
-            }
-          }}
-        >
-          <BookmarkIcon
-            className={`transition-all duration-200 group-hover:stroke-white ${
-              saved ? "fill-white stroke-transparent" : ""
-            }`}
-          />
-        </button>
+                setSaved((saved) => !saved);
+              }
+            }}
+          >
+            <BookmarkIcon
+              className={`transition-all duration-200 group-hover:stroke-white ${
+                saved ? "fill-white stroke-transparent" : ""
+              }`}
+            />
+          </button>
+        )}
       </div>
     </div>
   );

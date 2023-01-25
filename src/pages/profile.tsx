@@ -93,7 +93,7 @@ const CollectionCard = ({
 const Profile = () => {
   const { data: sessionData } = useSession();
   const router = useRouter();
-  const userPhotos = api.photos.getPhotosByUser.useQuery({ limit: 24 });
+  const userPhotos = api.photos.getPhotosByUser.useQuery({ limit: 16 });
   const userCollections = api.collections.getCollectionsByUser.useQuery({});
   const createCollection = api.collections.insertNewCollection.useMutation();
 
