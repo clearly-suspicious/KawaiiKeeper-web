@@ -11,6 +11,7 @@ const App = () => {
   const getPopularPhotos = api.photos.getMostLikedPhotos.useQuery({
     limit: 16,
   });
+  const userCollections = api.collections.getCollectionsByUser.useQuery({});
 
   return (
     <>
@@ -32,6 +33,7 @@ const App = () => {
                       key={photo.id}
                       loading={getPopularPhotos.isLoading}
                       photo={photo}
+                      collections={userCollections.data?.data}
                     />
                   )
                 )}

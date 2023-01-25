@@ -1,6 +1,8 @@
+import { Collection, Photo } from "@prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { useMemo } from "react";
 
 import Button from "../components/Button";
 import Header from "../components/Header";
@@ -8,11 +10,91 @@ import ImageCard from "../components/ImageCard";
 import Tabs from "../components/Tabs";
 import { api } from "../utils/api";
 
+function generateLightColorHex() {
+  let color = "#";
+  for (let i = 0; i < 3; i++)
+    color += (
+      "0" + Math.floor(((1 + Math.random()) * Math.pow(16, 2)) / 2).toString(16)
+    ).slice(-2);
+  return color;
+}
+
+const CollectionCard = ({
+  collection,
+}: {
+  collection: Collection & { photos: Photo[] };
+}) => {
+  const randomLightColor = useMemo(
+    () => generateLightColorHex(),
+    [collection.id]
+  );
+  return (
+    <div className="relative flex h-full w-full max-w-[512px] flex-col space-y-4">
+      <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+        {collection.photos[0] ? (
+          <Image
+            src={collection.photos[0].url as string}
+            fill
+            alt={collection.photos[0].prompt + " image"}
+          />
+        ) : (
+          <div className="h-full w-full rounded-xl border" />
+        )}
+      </div>
+      <div className="grid w-full grid-cols-3 gap-4">
+        {collection.photos[1] ? (
+          <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+            <Image
+              src={collection.photos[1].url as string}
+              fill
+              alt={collection.photos[1].prompt + " image"}
+            />{" "}
+          </div>
+        ) : (
+          <div className="aspect-square w-full rounded-xl border" />
+        )}
+        {collection.photos[2] ? (
+          <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+            <Image
+              src={collection.photos[2].url as string}
+              fill
+              alt={collection.photos[2].prompt + " image"}
+            />{" "}
+          </div>
+        ) : (
+          <div className="aspect-square w-full rounded-xl border" />
+        )}
+        {collection.photos.length > 3 ? (
+          <div
+            style={{
+              backgroundColor: `${randomLightColor}`,
+            }}
+            className="grid place-items-center rounded-xl text-[20px] font-semibold text-gray-800"
+          >
+            +{collection.photos.length - 3}
+          </div>
+        ) : collection.photos[3] ? (
+          <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+            <Image
+              src={collection.photos[3].url as string}
+              fill
+              alt={collection.photos[3].prompt + " image"}
+            />{" "}
+          </div>
+        ) : (
+          <div className="aspect-square w-full rounded-xl border" />
+        )}
+      </div>
+      <div className="font-semibold text-gray-200">{collection.name}</div>
+    </div>
+  );
+};
+
 const Profile = () => {
   const { data: sessionData } = useSession();
   const router = useRouter();
   const userPhotos = api.photos.getPhotosByUser.useQuery({ limit: 24 });
-  const userCollections = api.collections.getCollectionsByUser.useQuery();
+  const userCollections = api.collections.getCollectionsByUser.useQuery({});
   const createCollection = api.collections.insertNewCollection.useMutation();
 
   return (
@@ -53,13 +135,14 @@ const Profile = () => {
                     ),
                     content: (
                       <>
-                        <div className="w-full columns-1 gap-10 space-y-6 sm:columns-2 md:columns-3 lg:columns-4">
+                        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                           {userPhotos.data &&
                             userPhotos.data.data.map((photo: any) => (
                               <ImageCard
                                 key={photo.id}
                                 loading={userPhotos.isLoading}
                                 photo={photo}
+                                collections={userCollections.data?.data}
                               />
                             ))}
                         </div>
@@ -73,7 +156,7 @@ const Profile = () => {
                           <span>Collections</span>
                           <span className="min-w-[24px] rounded-lg bg-blue-300 py-0.5 px-1 text-black">
                             {userCollections.data
-                              ? userCollections.data.length
+                              ? userCollections.data.data.length
                               : 0}
                           </span>
                         </div>
@@ -82,25 +165,15 @@ const Profile = () => {
                     value: "tab2",
                     content: (
                       <>
-                        <div className="mb-12"></div>
-                        <div className="w-full columns-1 gap-10 space-y-6 text-white sm:columns-2 md:columns-3 lg:columns-4">
-                          <Image
-                            className="cursor-pointer text-white"
-                            onClick={() => {
-                              // TODO: Vinay write css/ui to take input somewhere and create a new collection pls
-                              createCollection.mutate({
-                                name: "Favs Collection",
-                              });
-                            }}
-                            width={120}
-                            height={120}
-                            src="\images\create-collection.svg"
-                            alt="Create Collection"
-                          />
+                        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                           {userCollections.data &&
-                            userCollections.data.map((collection) => (
-                              // TODO: Vinay display this in card or someshit
-                              <li key={collection.id}>{collection.name}</li>
+                            userCollections.data.data.map((collection) => (
+                              <CollectionCard
+                                key={collection.id}
+                                collection={
+                                  collection as Collection & { photos: Photo[] }
+                                }
+                              />
                             ))}
                         </div>
                       </>

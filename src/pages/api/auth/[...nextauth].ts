@@ -56,12 +56,17 @@ export const authOptions: NextAuthOptions = {
           discordId: message.user.discordId,
         },
       });
-      console.log("existingUser", existingUser);
+
       if (!existingUser)
         await prisma.internalUser.create({
           data: {
             discordId: message.user.discordId,
             name: message.user.name,
+            collections: {
+              create: {
+                name: "All Saved",
+              },
+            },
           },
         });
     },

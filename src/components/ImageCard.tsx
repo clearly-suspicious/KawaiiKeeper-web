@@ -1,15 +1,69 @@
-import { Interaction, Photo } from "@prisma/client";
+import { Collection, Interaction, Photo } from "@prisma/client";
+import clsx from "clsx";
 import Image from "next/image";
 import React from "react";
+
+import { api } from "../utils/api";
 
 export type ImageCardType = {
   loading: boolean;
   photo?: Photo & { interactions: Interaction[] };
+  collections?: Collection[];
 };
 
-const ImageCard = ({ loading, photo }: ImageCardType) => {
-  const isIlikedByCurrentUser = photo?.interactions.length !== 0;
+const BookmarkIcon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className={clsx("h-5 w-5 stroke-gray-400", className)}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"
+    />
+  </svg>
+);
+
+const ImageCard = ({ loading, photo, collections }: ImageCardType) => {
+  const isIlikedByCurrentUser =
+    photo?.interactions.filter((interaction) => interaction.type === "LIKE")
+      .length !== 0;
+  const isSavedByCurrentUser =
+    photo?.interactions.filter((interaction) => interaction.type === "SAVE")
+      .length !== 0;
   const [liked, setLiked] = React.useState(isIlikedByCurrentUser);
+  const [saved, setSaved] = React.useState(isSavedByCurrentUser);
+
+  React.useEffect(() => {
+    if (saved !== isSavedByCurrentUser) setSaved(isSavedByCurrentUser);
+  }, [isSavedByCurrentUser]);
+
+  React.useEffect(() => {
+    if (liked !== isIlikedByCurrentUser) setLiked(isIlikedByCurrentUser);
+  }, [isIlikedByCurrentUser]);
+
+  const utils = api.useContext();
+  const savePhotoMutation = api.collections.insertPhotoToCollection.useMutation(
+    {
+      onSuccess: (input) => {
+        utils.collections.invalidate();
+        utils.photos.invalidate();
+      },
+    }
+  );
+  const removePhotoMutation =
+    api.collections.removePhotoFromCollection.useMutation({
+      onSuccess: (input) => {
+        utils.collections.invalidate();
+
+        utils.photos.invalidate();
+      },
+    });
+
   if (loading || !photo) {
     return (
       <div
@@ -72,6 +126,33 @@ const ImageCard = ({ loading, photo }: ImageCardType) => {
             {photo.likes}
           </p>
         </div>
+
+        <button
+          className="group"
+          onClick={() => {
+            if (collections && collections[0]) {
+              if (saved) {
+                removePhotoMutation.mutate({
+                  photoId: photo.id,
+                  collectionId: collections[0].id,
+                });
+              } else {
+                savePhotoMutation.mutate({
+                  photoId: photo.id,
+                  collectionId: collections[0].id,
+                });
+              }
+
+              setSaved((saved) => !saved);
+            }
+          }}
+        >
+          <BookmarkIcon
+            className={`transition-all duration-200 group-hover:stroke-white ${
+              saved ? "fill-white stroke-transparent" : ""
+            }`}
+          />
+        </button>
       </div>
     </div>
   );

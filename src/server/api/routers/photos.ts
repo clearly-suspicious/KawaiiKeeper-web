@@ -39,7 +39,7 @@ export const photosRouter = router({
         // if logged in get the  user's interactions with the photos so we can display their like status
         include: ctx.user
           ? {
-              interactions: { where: { type: "LIKE", userId: ctx.user.id } },
+              interactions: { where: { userId: ctx.user.id } },
             }
           : undefined,
       });
@@ -106,7 +106,7 @@ export const photosRouter = router({
           createdAt: "desc",
         },
         include: {
-          interactions: { where: { type: "LIKE", userId } },
+          interactions: { where: { userId } },
         },
       });
 

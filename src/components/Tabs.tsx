@@ -34,15 +34,15 @@ const Tabs = ({ tabs }: TabsProps) => {
               className={clsx(
                 "group",
                 "border-b ",
-                "border-gray-300 dark:border-gray-600",
+                "border-gray-600",
                 "radix-state-active:border-b-gray-700 focus-visible:radix-state-active:border-b-transparent  dark:radix-state-active:border-b-gray-100  focus-visible:dark:radix-state-active:border-b-transparent ",
-                "flex flex-1 items-center justify-center px-3 py-5 xl:min-w-[280px] xl:flex-initial",
+                "flex flex-1 items-center justify-center px-3 py-5 xl:min-w-[380px] xl:flex-initial",
                 "focus:radix-state-active:border-b-red",
                 "focus:z-10 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75",
                 "radix-state-active:text-[#DADADA] radix-state-inactive:text-neutral-400"
               )}
             >
-              <span className={clsx("font-semibold  ")}>{title}</span>
+              <span className={clsx("font-semibold")}>{title}</span>
             </TabsPrimitive.Trigger>
           );
         })}

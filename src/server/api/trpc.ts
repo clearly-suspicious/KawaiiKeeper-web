@@ -100,6 +100,11 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
           data: {
             discordId: req.headers["discord-id"] as string,
             name: decodeURIComponent(req.headers["discord-username"] as string),
+            collections: {
+              create: {
+                name: "All Saved",
+              },
+            },
           },
         });
         user = createdUser;
