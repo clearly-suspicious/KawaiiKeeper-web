@@ -69,9 +69,10 @@ export const photosRouter = router({
     }),
 
   getPhotosByUser: protectedProcedure
-    .meta({ openapi: { method: "GET", path: "/photo" } })
+    .meta({ openapi: { method: "GET", path: "/photo/user/{userId}" } })
     .input(
       z.object({
+        userId: z.string().optional(),
         limit: z.number().min(1).max(100).optional(),
         cursor: z.string().optional(),
       })
@@ -84,26 +85,41 @@ export const photosRouter = router({
           prevCursor: z.string().nullish(),
           hasMore: z.boolean(),
           count: z.number(),
+          totalCount: z.number(),
         }),
       })
     )
     .query(async ({ ctx, input }) => {
       const take = input.limit ?? 25;
       const skip = input.cursor ? 1 : 0; //skip cursor if it exists
-      const photos = await ctx.prisma.photo.findMany({
+
+      const userId = input.userId ?? ctx.user.id;
+
+      const userPhotos = ctx.prisma.photo.findMany({
         take,
         skip,
         cursor: input.cursor ? { id: input.cursor } : undefined,
         where: {
-          creatorId: ctx.user.id,
+          creatorId: userId,
         },
         orderBy: {
           createdAt: "desc",
         },
         include: {
-          interactions: { where: { type: "LIKE", userId: ctx.user.id } },
+          interactions: { where: { type: "LIKE", userId } },
         },
       });
+
+      const userPhotosCount = ctx.prisma.photo.count({
+        where: {
+          creatorId: userId,
+        },
+      });
+
+      const [photos, count] = await ctx.prisma.$transaction([
+        userPhotos,
+        userPhotosCount,
+      ]);
       const lastPhoto = photos[photos.length - 1];
       const nextCursor = lastPhoto ? lastPhoto.id : undefined;
       return {
@@ -113,6 +129,7 @@ export const photosRouter = router({
           prevCursor: input.cursor,
           hasMore: nextCursor ? true : false,
           count: photos.length,
+          totalCount: count,
         },
       };
     }),

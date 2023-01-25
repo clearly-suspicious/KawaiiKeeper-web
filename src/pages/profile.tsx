@@ -11,7 +11,7 @@ import { api } from "../utils/api";
 const Profile = () => {
   const { data: sessionData } = useSession();
   const router = useRouter();
-  const userPhotos = api.photos.getPhotosByUser.useQuery({ limit: 20 });
+  const userPhotos = api.photos.getPhotosByUser.useQuery({ limit: 24 });
   const userCollections = api.collections.getCollectionsByUser.useQuery();
   const createCollection = api.collections.insertNewCollection.useMutation();
 
@@ -44,8 +44,9 @@ const Profile = () => {
                         <div className="flex items-center space-x-2">
                           <span>Generations</span>
                           <span className="min-w-[24px] rounded-lg bg-pink-300 py-0.5 px-1 text-black">
-                            {userPhotos.data ? userPhotos.data.data.length : 0}
-                            {/* //TODO this number isnt right */}
+                            {userPhotos.data
+                              ? userPhotos.data.pagination.totalCount
+                              : 0}
                           </span>
                         </div>
                       </>
