@@ -14,13 +14,19 @@ type TabsProps = {
 };
 
 const Tabs = ({ tabs }: TabsProps) => {
+  const internalTabs = tabs.map((tab, i) => {
+    if (typeof tab.value === "undefined") {
+      if (typeof tab.title === "string") {
+        return { ...tab, value: tab.title };
+      }
+      return { ...tab, value: String(i) };
+    }
+    return tab;
+  });
   return (
-    <TabsPrimitive.Root defaultValue="tab1">
+    <TabsPrimitive.Root defaultValue={internalTabs[0]?.value ?? "0"}>
       <TabsPrimitive.List className={clsx("flex w-full")}>
-        {tabs.map(({ title, value }, i) => {
-          if (typeof value === "undefined" && typeof title === "string") {
-            value = title;
-          }
+        {internalTabs.map(({ title, value }, i) => {
           return (
             <TabsPrimitive.Trigger
               key={`tab-trigger-${value}`}
@@ -41,10 +47,7 @@ const Tabs = ({ tabs }: TabsProps) => {
           );
         })}
       </TabsPrimitive.List>
-      {tabs.map((tab, i) => {
-        if (typeof tab.value === "undefined" && typeof tab.title === "string") {
-          tab.value = tab.title;
-        }
+      {internalTabs.map((tab, i) => {
         return (
           <TabsPrimitive.Content
             key={`tab-content-${tab.value}`}

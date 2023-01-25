@@ -32,7 +32,10 @@ const ImageCard = ({ loading, photo }: ImageCardType) => {
     );
   }
   return (
-    <div className="flex w-full flex-col" key={photo.id}>
+    <div
+      className="flex w-full break-inside-avoid-column flex-col"
+      key={photo.id}
+    >
       <div className="relative aspect-square w-full overflow-hidden rounded-xl">
         <Image src={photo.url as string} fill alt={photo.prompt} />
       </div>
