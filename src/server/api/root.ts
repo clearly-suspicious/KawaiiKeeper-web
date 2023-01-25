@@ -1,5 +1,6 @@
 import { apiKeysRouter } from "./routers/apiKey";
 import { collectionsRouter } from "./routers/collections";
+import { openaiRouter } from "./routers/openai";
 import { paymentsRouter } from "./routers/payments";
 import { photosRouter } from "./routers/photos";
 import { supportRouter } from "./routers/support";
@@ -16,7 +17,8 @@ export const appRouter = mergeRouters(
     photos: photosRouter,
     collections: collectionsRouter,
     support: supportRouter,
-    payments: paymentsRouter
+    payments: paymentsRouter,
+    openai: openaiRouter,
   })
 );
 
