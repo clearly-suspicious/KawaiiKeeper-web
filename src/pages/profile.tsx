@@ -111,6 +111,7 @@ const Profile = () => {
           ),
         ]}
       />
+
       <main className="relative grid w-full place-items-center overflow-hidden bg-[#070707] px-5">
         <section className="container mx-auto flex min-h-screen w-full flex-col py-12 ">
           <div className=" w-full">

@@ -92,6 +92,7 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
               .map((button) => (
                 <>{button}</>
               ))}
+
             <Button
               className="border-[#A38A4C] hover:border-[#443C26] hover:bg-[#443C26]"
               type="button"

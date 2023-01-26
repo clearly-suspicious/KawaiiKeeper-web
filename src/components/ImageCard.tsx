@@ -76,7 +76,7 @@ const ImageCard = ({ loading, photo, collections }: ImageCardType) => {
         role="status"
         className="animate-pulse space-y-8 md:flex md:items-center md:space-y-0 md:space-x-8"
       >
-        <div className="flex h-48 w-full items-center justify-center rounded bg-gray-300 dark:bg-gray-700 sm:w-96">
+        <div className="flex aspect-square w-full items-center justify-center rounded bg-gray-300 dark:bg-gray-700 sm:w-96">
           <svg
             className="h-12 w-12 text-gray-200"
             xmlns="http://www.w3.org/2000/svg"

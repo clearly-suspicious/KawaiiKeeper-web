@@ -4,6 +4,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import Button from "../components/Button";
 import Header from "../components/Header";
+import ImageCard from "../components/ImageCard";
 import Seo from "../components/Seo";
 import { api } from "../utils/api";
 import { shuffle } from "../utils/helpers";
@@ -32,15 +33,20 @@ const Home = () => {
             : ""
         } flex flex-col space-y-4 xl:space-y-8`}
       >
-        {getPopularPhotos.data &&
-          shuffle(getPopularPhotos.data.data.slice(start, end)).map((photo) => (
-            <div
-              key={photo.id}
-              className="relative aspect-square w-full overflow-hidden"
-            >
-              <Image src={photo.url as string} fill alt={photo.prompt} />
-            </div>
-          ))}
+        {getPopularPhotos.data
+          ? shuffle(getPopularPhotos.data.data.slice(start, end)).map(
+              (photo) => (
+                <div
+                  key={photo.id}
+                  className="relative aspect-square w-full overflow-hidden"
+                >
+                  <Image src={photo.url as string} fill alt={photo.prompt} />
+                </div>
+              )
+            )
+          : [...Array(Math.abs(end - start)).keys()].map((i) => (
+              <ImageCard key={i} loading={true} />
+            ))}
       </div>
     );
   };
@@ -76,7 +82,7 @@ const Home = () => {
             </div> */}
         </div>
       </main>
-      <div className="absolute inset-0 -z-[5] [background:linear-gradient(180deg,#000000_38%,rgba(0,0,0,0)_128%)]" />
+      <div className="absolute inset-0 -z-[5] min-h-screen [background:linear-gradient(180deg,#000000_38%,rgba(0,0,0,0)_128%)] " />
       {getPopularPhotos.data ? (
         <div
           className="perps absolute inset-0 -z-10 h-screen max-h-screen overflow-hidden"
