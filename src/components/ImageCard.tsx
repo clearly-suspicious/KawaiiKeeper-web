@@ -97,7 +97,12 @@ const ImageCard = ({ loading, photo, collections }: ImageCardType) => {
       key={photo.id}
     >
       <div className="relative aspect-square w-full overflow-hidden rounded-xl">
-        <Image src={photo.url as string} fill alt={photo.prompt} />
+        <Image
+          src={photo.url as string}
+          fill
+          alt={photo.prompt}
+          sizes="512px"
+        />
       </div>
       <div className="flex w-full items-center justify-between">
         <div
