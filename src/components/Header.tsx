@@ -74,6 +74,11 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
               ))}
 
             <BuyTokenDialog
+              title="Donate to our project 💖"
+              subtitle=" Your support for us through donations allows Kawaii Keeper to keep
+              running. We haven't decided on the rewards yet but for now we will
+              add an equivalent amount of tokens to your account in return for
+              your support! Thank you for considering a donation."
               trigger={
                 <Button
                   className="border-[#A38A4C] hover:border-[#443C26] hover:bg-[#443C26]"
