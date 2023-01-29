@@ -30,6 +30,7 @@ export const paymentsRouter = router({
       z.object({
         transactionType: TransactionType,
         eligible: z.boolean(),
+        tokens: z.number(),
       })
     )
     .query(async ({ input, ctx }) => {
@@ -43,6 +44,7 @@ export const paymentsRouter = router({
       return {
         transactionType: input.transactionType,
         eligible,
+        tokens: userInfo.tokens,
       };
     }),
 });

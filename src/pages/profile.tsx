@@ -104,6 +104,9 @@ const Profile = () => {
   );
   const userCollections = api.collections.getCollectionsByUser.useQuery({});
   const createCollection = api.collections.insertNewCollection.useMutation();
+  const getTokens = api.payments.checkEligibility.useQuery({
+    transactionType: "TXT2IMG",
+  });
   const { ref, inView } = useInView();
 
   useEffect(() => {
@@ -134,7 +137,12 @@ const Profile = () => {
               <h1 className="text-[56px] font-bold text-gray-200">
                 {sessionData?.user?.name}
               </h1>
-              <BuyTokenDialog />
+              <div className=" flex items-center ">
+                <p className="mr-4 text-gray-300">
+                  {getTokens.data ? getTokens.data.tokens : 0}
+                </p>
+                <BuyTokenDialog />
+              </div>
             </div>
             <Tabs
               tabs={[
