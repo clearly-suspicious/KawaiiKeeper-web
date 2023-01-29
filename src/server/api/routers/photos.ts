@@ -69,10 +69,9 @@ export const photosRouter = router({
     }),
 
   getPhotosByUser: protectedProcedure
-    .meta({ openapi: { method: "GET", path: "/photo/user/{userId}" } })
+    .meta({ openapi: { method: "GET", path: "/photo/user" } })
     .input(
       z.object({
-        userId: z.string().optional(),
         limit: z.number().min(1).max(100).optional(),
         cursor: z.string().optional(),
       })
@@ -93,7 +92,7 @@ export const photosRouter = router({
       const take = input.limit ?? 25;
       const skip = input.cursor ? 1 : 0; //skip cursor if it exists
 
-      const userId = input.userId ?? ctx.user.id;
+      const userId = ctx.user.id;
 
       const userPhotos = ctx.prisma.photo.findMany({
         take,

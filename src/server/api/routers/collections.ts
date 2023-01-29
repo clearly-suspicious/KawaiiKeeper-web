@@ -5,10 +5,9 @@ import { protectedProcedure, router } from "./../trpc";
 
 export const collectionsRouter = router({
   getCollectionsByUser: protectedProcedure
-    .meta({ openapi: { method: "GET", path: "/collection/user/{userId}" } })
+    .meta({ openapi: { method: "GET", path: "/collection/user" } })
     .input(
       z.object({
-        userId: z.string().optional(),
         limit: z.number().min(1).max(100).optional(),
         cursor: z.string().optional(),
       })
@@ -29,7 +28,7 @@ export const collectionsRouter = router({
       const take = input.limit ?? 25;
       const skip = input.cursor ? 1 : 0; //skip cursor if it exists
 
-      const userId = input.userId ?? ctx.user.id;
+      const userId = ctx.user.id;
 
       const userCollections = ctx.prisma.collection.findMany({
         take,
