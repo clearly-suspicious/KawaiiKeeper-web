@@ -5,7 +5,7 @@ import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { twMerge } from "tailwind-merge";
 
-import Button from "./Button";
+import Button from "./base/Button";
 import Sparkles from "./svgs/Sparkles";
 import { api } from "../utils/api";
 

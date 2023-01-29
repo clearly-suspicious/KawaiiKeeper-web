@@ -3,7 +3,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import React from "react";
 
-import Button from "./Button";
+import Button from "./base/Button";
 import Dropdown from "./HoverDropdown";
 import { api } from "../utils/api";
 

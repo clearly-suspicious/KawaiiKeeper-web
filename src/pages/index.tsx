@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { signIn, signOut, useSession } from "next-auth/react";
 
-import Button from "../components/Button";
+import Button from "../components/base/Button";
 import Header from "../components/Header";
 import ImageCard from "../components/ImageCard";
 import Seo from "../components/Seo";

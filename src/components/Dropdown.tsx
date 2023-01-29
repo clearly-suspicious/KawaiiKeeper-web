@@ -2,7 +2,7 @@ import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { clsx } from "clsx";
 import React, { ReactNode } from "react";
 
-import Button from "./Button";
+import Button from "./base/Button";
 
 interface RadixMenuItem {
   label: string;
