@@ -49,5 +49,9 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography"), require("tailwindcss-radix")()],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("tailwindcss-radix")(),
+    require("@tailwindcss/line-clamp"),
+  ],
 };

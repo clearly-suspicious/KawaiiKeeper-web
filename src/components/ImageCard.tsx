@@ -3,6 +3,8 @@ import clsx from "clsx";
 import Image from "next/image";
 import React from "react";
 
+import Button from "./Button";
+import Dropdown from "./HoverDropdown";
 import { api } from "../utils/api";
 
 export type ImageCardType = {
@@ -28,7 +30,26 @@ const BookmarkIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const EliipsesVerticalIcon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className={clsx("h-5 w-5 stroke-gray-400", className)}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+    />
+  </svg>
+);
+
 const ImageCard = ({ loading, photo, collections }: ImageCardType) => {
+  const [isHovered, setIsHovered] = React.useState(false);
+
   const isIlikedByCurrentUser =
     photo?.interactions.filter((interaction) => interaction.type === "LIKE")
       .length !== 0;
@@ -96,7 +117,25 @@ const ImageCard = ({ loading, photo, collections }: ImageCardType) => {
       className="flex w-full break-inside-avoid-column flex-col"
       key={photo.id}
     >
-      <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+      <div
+        className="relative aspect-square w-full overflow-hidden rounded-xl"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div
+          className={`absolute inset-0 z-[1] flex flex-col justify-between p-2  ${
+            isHovered ? "" : "hidden"
+          }`}
+        >
+          <Button className="aspect-square min-h-0 self-end rounded-full border-0 bg-[rgba(0,0,0,0.6)] px-1 lg:px-1">
+            <EliipsesVerticalIcon className="w-6 stroke-white" />
+          </Button>
+          {photo.prompt && (
+            <div className="w-full rounded-xl bg-[rgba(0,0,0,0.6)] p-2 text-[14px] font-[300] text-white backdrop-blur-xl line-clamp-3">
+              {photo.prompt}
+            </div>
+          )}
+        </div>
         <Image
           src={photo.url as string}
           fill
@@ -151,32 +190,36 @@ const ImageCard = ({ loading, photo, collections }: ImageCardType) => {
         </div>
 
         {collections && (
-          <button
-            className="group"
-            onClick={() => {
-              if (collections[0]) {
-                if (saved) {
-                  removePhotoMutation.mutate({
-                    photoId: photo.id,
-                    collectionId: collections[0].id,
-                  });
-                } else {
-                  savePhotoMutation.mutate({
-                    photoId: photo.id,
-                    collectionId: collections[0].id,
-                  });
-                }
+          <Dropdown
+            trigger={
+              <button
+                className="group"
+                onClick={() => {
+                  if (collections[0]) {
+                    if (saved) {
+                      removePhotoMutation.mutate({
+                        photoId: photo.id,
+                        collectionId: collections[0].id,
+                      });
+                    } else {
+                      savePhotoMutation.mutate({
+                        photoId: photo.id,
+                        collectionId: collections[0].id,
+                      });
+                    }
 
-                setSaved((saved) => !saved);
-              }
-            }}
-          >
-            <BookmarkIcon
-              className={`transition-all duration-200 group-hover:stroke-white ${
-                saved ? "fill-white stroke-transparent" : ""
-              }`}
-            />
-          </button>
+                    setSaved((saved) => !saved);
+                  }
+                }}
+              >
+                <BookmarkIcon
+                  className={`transition-all duration-200 group-hover:stroke-white ${
+                    saved ? "fill-white stroke-transparent" : ""
+                  }`}
+                />
+              </button>
+            }
+          />
         )}
       </div>
     </div>

@@ -10,9 +10,10 @@ import { api } from "../utils/api";
 import { shuffle } from "../utils/helpers";
 
 const Home = () => {
+  const TOTAL_PHOTOS = 25;
   const { data: sessionData } = useSession();
   const getPopularPhotos = api.photos.getMostLikedPhotos.useQuery({
-    limit: 30,
+    limit: 25,
   });
   const router = useRouter();
 
@@ -33,7 +34,7 @@ const Home = () => {
             : ""
         } flex flex-col space-y-4 xl:space-y-8`}
       >
-        {getPopularPhotos.data
+        {getPopularPhotos.data && getPopularPhotos.isLoading === false
           ? shuffle(getPopularPhotos.data.data.slice(start, end)).map(
               (photo) => (
                 <div
@@ -94,11 +95,25 @@ const Home = () => {
               transform: "translateX(50%) translateY(-50%) rotateX(36deg)",
             }}
           >
-            <ImageColumn offset start={0} end={6} />
-            <ImageColumn start={6} end={12} />
-            <ImageColumn offset start={12} end={18} />
-            <ImageColumn start={18} end={24} />
-            <ImageColumn offset start={24} end={30} />
+            <ImageColumn offset start={0} end={TOTAL_PHOTOS / 5} />
+            <ImageColumn
+              start={TOTAL_PHOTOS / 5}
+              end={(2 * TOTAL_PHOTOS) / 5}
+            />
+            <ImageColumn
+              offset
+              start={(2 * TOTAL_PHOTOS) / 5}
+              end={(3 * TOTAL_PHOTOS) / 5}
+            />
+            <ImageColumn
+              start={(3 * TOTAL_PHOTOS) / 5}
+              end={(4 * TOTAL_PHOTOS) / 5}
+            />
+            <ImageColumn
+              offset
+              start={(4 * TOTAL_PHOTOS) / 5}
+              end={(5 * TOTAL_PHOTOS) / 5}
+            />
           </div>
         </div>
       ) : (
