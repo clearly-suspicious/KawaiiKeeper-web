@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import { twMerge } from "tailwind-merge";
 
 import Button from "./base/Button";
+import BuyTokenDialog from "./BuyTokenDialog";
 import Sparkles from "./svgs/Sparkles";
 import { api } from "../utils/api";
 
@@ -72,21 +73,24 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
                 <>{button}</>
               ))}
 
-            <Button
-              className="border-[#A38A4C] hover:border-[#443C26] hover:bg-[#443C26]"
-              type="button"
-              onClick={() => router.push("/donate")}
-            >
-              <div className="mr-4 flex items-center space-x-1 text-[#F8CD7B]">
-                <div>Donate</div>
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <ProgressBar
-                progress={totalDonated.data ?? 0}
-                totalProgress={5000}
-                title="3 Month Goal"
-              />
-            </Button>
+            <BuyTokenDialog
+              trigger={
+                <Button
+                  className="border-[#A38A4C] hover:border-[#443C26] hover:bg-[#443C26]"
+                  type="button"
+                >
+                  <div className="mr-4 flex items-center space-x-1 text-[#F8CD7B]">
+                    <div>Donate</div>
+                    <Sparkles className="h-5 w-5" />
+                  </div>
+                  <ProgressBar
+                    progress={totalDonated.data ?? 0}
+                    totalProgress={5000}
+                    title="3 Month Goal"
+                  />
+                </Button>
+              }
+            />
           </div>
           {sessionData ? (
             <button

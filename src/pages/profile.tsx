@@ -130,7 +130,7 @@ const Profile = () => {
       <main className="relative grid w-full place-items-center overflow-hidden bg-[#070707] px-5">
         <section className="container mx-auto flex min-h-screen w-full flex-col py-12 ">
           <div className="mb-12 w-full">
-            <div className="flex items-center justify-between space-x-4">
+            <div className="flex flex-col justify-between space-x-4 sm:flex-row sm:items-center">
               <h1 className="text-[56px] font-bold text-gray-200">
                 {sessionData?.user?.name}
               </h1>

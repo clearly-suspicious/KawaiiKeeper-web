@@ -10,6 +10,17 @@ import getStripe from "../utils/get-stripejs";
 const BuyTokenDialog = ({
   title = "Support Kawaii Keeper",
   subtitle = "Thank you for considering buying tokens to support the project. 25 tokens = $1. You can use 1 token to generate a random prompt.",
+  trigger = (
+    <Button
+      className="border-[#A38A4C] hover:border-[#443C26] hover:bg-[#443C26]"
+      type="button"
+    >
+      <div className="flex items-center space-x-1 text-[#F8CD7B]">
+        <div>Buy tokens</div>
+        <Sparkles className="w-5" />
+      </div>
+    </Button>
+  ),
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -82,26 +93,18 @@ const BuyTokenDialog = ({
       subtitle={subtitle}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      trigger={
-        <Button
-          className="border-[#A38A4C] hover:border-[#443C26] hover:bg-[#443C26]"
-          type="button"
-        >
-          <div className="flex items-center space-x-1 text-[#F8CD7B]">
-            <div>Buy tokens</div>
-            <Sparkles className="w-5" />
-          </div>
-        </Button>
-      }
+      trigger={trigger}
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
         className=" flex  flex-col text-gray-200"
       >
-        <div className="mb-8 mt-4 flex items-center space-x-2">
-          <RadioTextCard name="amount" text="$2" value={2} />
-          <RadioTextCard name="amount" text="$5" value={5} />
-          <RadioTextCard name="amount" text="$10" value={10} />
+        <div className="mb-8 mt-4 flex flex-col items-center space-x-2 space-y-2 sm:flex-row">
+          <div className="flex space-x-2">
+            <RadioTextCard name="amount" text="$2" value={2} />
+            <RadioTextCard name="amount" text="$5" value={5} />
+            <RadioTextCard name="amount" text="$10" value={10} />
+          </div>
 
           <div className="relative h-full w-full min-w-[200px]">
             <input
