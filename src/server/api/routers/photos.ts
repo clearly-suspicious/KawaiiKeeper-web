@@ -220,7 +220,18 @@ export const photosRouter = router({
     )
     .output(z.custom<Photo>())
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.photo.create({
+      const user = ctx.prisma.internalUser.update({
+        where: {
+          id: ctx.user.id,
+        },
+        data: {
+          tokens: {
+            decrement: 1,
+          },
+        },
+      });
+
+      const photo = ctx.prisma.photo.create({
         data: {
           ...input,
           user: {
@@ -230,6 +241,9 @@ export const photosRouter = router({
           },
         },
       });
+
+      const [_, p] = await ctx.prisma.$transaction([user, photo]);
+      return p;
     }),
 
   deletePhoto: protectedProcedure
