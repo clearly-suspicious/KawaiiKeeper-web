@@ -9,8 +9,7 @@ export function checkEligibility(type: string, userTokens: number) {
   if (cost) {
     if (userTokens < cost) return false;
     return true;
-  } else {
-    console.error(`No pricing found for ${type}`);
-    return false;
   }
+  console.error(`No pricing found for ${type}`);
+  return false;
 }
