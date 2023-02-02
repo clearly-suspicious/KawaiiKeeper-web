@@ -65,13 +65,14 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       const PaymentIntent = await stripe.paymentIntents.retrieve(
         charge.payment_intent as string
       );
-      console.log("PaymentIntent", PaymentIntent);
+      const discordId = PaymentIntent.metadata.discordId;
+      console.log("PaymentIntent", discordId);
 
       const caller = appRouter.createCaller(
         await createTRPCContext({ req, res })
       );
 
-      await caller.payments.createPayment(charge);
+      await caller.payments.createPayment({ ...charge, discordId });
     } else {
       console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
     }

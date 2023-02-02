@@ -24,6 +24,7 @@ export const paymentsRouter = router({
   createPayment: publicProcedure
     .input(z.custom<Stripe.Charge & { discordId?: string }>())
     .mutation(async ({ input, ctx }) => {
+      console.log("processing ppayment...");
       const discordId = input.discordId;
       delete input.discordId;
       const charge = input;
