@@ -141,7 +141,7 @@ const Profile = () => {
                 <p className="mr-4 text-gray-300">
                   {getTokens.data ? getTokens.data.tokens : 0}
                 </p>
-                <BuyTokenDialog />
+                <BuyTokenDialog discordId={sessionData?.user?.discordId} />
               </div>
             </div>
             <Tabs
