@@ -60,15 +60,26 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     } else if (event.type === "charge.succeeded") {
       const charge = event.data.object as Stripe.Charge;
       console.log(`💵 Charge id: ${charge.id}`);
-      const relax = event.data.object as Stripe.Charge;
-      console.log("relax: ", relax);
-      await prisma.payments.create({
+
+      const payment = await prisma.payments.create({
         data: {
-          name: relax.billing_details.name as string,
-          emailId: relax.billing_details.email as string,
-          amount: (relax.amount as number) / 100,
+          name: charge.billing_details.name as string,
+          emailId: charge.billing_details.email as string,
+          amount: (charge.amount as number) / 100,
         },
       });
+      if (payment.amount) {
+        await prisma.internalUser.update({
+          where: {
+            id: payment.id,
+          },
+          data: {
+            tokens: {
+              increment: payment.amount * 25,
+            },
+          },
+        });
+      }
     } else {
       console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
     }

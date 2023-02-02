@@ -41,7 +41,12 @@ const Home = () => {
                   key={photo.id}
                   className="relative aspect-square w-full overflow-hidden"
                 >
-                  <Image src={photo.url as string} fill alt={photo.prompt} />
+                  <Image
+                    src={photo.url as string}
+                    fill
+                    alt={photo.prompt}
+                    sizes="512px"
+                  />
                 </div>
               )
             )
