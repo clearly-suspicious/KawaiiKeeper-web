@@ -34,7 +34,7 @@ const Home = () => {
             className="relative aspect-square w-full overflow-hidden"
           >
             <Image
-              src={`./images/landing-page/image (${i}).png`}
+              src={`/images/landing-page/image (${i}).png`}
               fill
               alt={photo.prompt}
               sizes="512px"
