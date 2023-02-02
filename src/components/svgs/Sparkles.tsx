@@ -9,7 +9,7 @@ const Sparkles = ({ className }: { className?: string }) => {
       x="0px"
       y="0px"
       viewBox="0 0 1000 1000"
-      enable-background="new 0 0 1000 1000"
+      enableBackground="new 0 0 1000 1000"
       xmlSpace="preserve"
       className={clsx("h-6 w-6 fill-[#F8CD7B]", className)}
     >

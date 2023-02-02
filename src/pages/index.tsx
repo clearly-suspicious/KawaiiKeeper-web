@@ -15,11 +15,21 @@ const Home = () => {
 
   const ImageColumn = ({
     offset = false,
+    start,
+    end,
   }: {
     start: number;
     end: number;
     offset?: boolean;
   }) => {
+    function range(start = 0, end = 1) {
+      const list = [];
+      for (let i = start; i <= end; i++) {
+        list.push(i);
+      }
+      return list;
+    }
+
     return (
       <div
         className={`${
@@ -28,15 +38,15 @@ const Home = () => {
             : ""
         } flex flex-col space-y-4 xl:space-y-8`}
       >
-        {shuffle([...Array(25).keys()]).map((photo, i) => (
+        {shuffle(range(start + 1, end + 1)).map((index, i) => (
           <div
-            key={photo.id}
+            key={i}
             className="relative aspect-square w-full overflow-hidden"
           >
             <Image
-              src={`/images/landing-page/image (${i}).png`}
+              src={`/images/landing-page/image (${index}).png`}
               fill
-              alt={photo.prompt}
+              alt="Popular background image"
               sizes="512px"
             />
           </div>
