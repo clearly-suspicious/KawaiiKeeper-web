@@ -19,11 +19,12 @@ export const paymentsRouter = router({
       return aggregations._sum.amount as number;
     }),
 
+  //!Can't rely on ctx here if called from webhook
   createPayment: publicProcedure
-    .input(z.custom<Stripe.Charge & { userId?: string }>())
+    .input(z.custom<Stripe.Charge & { discordId?: string }>())
     .mutation(async ({ input, ctx }) => {
-      const userId = input.userId;
-      delete input.userId;
+      const discordId = input.discordId;
+      delete input.discordId;
       const charge = input;
       const payment = await ctx.prisma.payments.create({
         data: {
@@ -35,14 +36,14 @@ export const paymentsRouter = router({
 
       const user = await ctx.prisma.user.findFirst({
         where: {
-          OR: [{ email: payment.emailId }, { id: userId }],
+          OR: [{ email: payment.emailId }, { discordId }],
         },
       });
 
       if (user) {
         await ctx.prisma.internalUser.update({
           where: {
-            id: user.id,
+            discordId: user.discordId,
           },
           data: {
             tokens: {

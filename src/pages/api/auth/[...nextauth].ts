@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { User as PrismaUser } from "@prisma/client";
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import NextAuth, { type NextAuthOptions, DefaultSession } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 
 import { env } from "../../../env/server.mjs";
@@ -12,6 +12,7 @@ export const authOptions: NextAuthOptions = {
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
+        session.user.discordId = user.discordId;
       }
       return session;
     },
@@ -78,5 +79,14 @@ export default NextAuth(authOptions);
 declare module "next-auth" {
   interface User extends Partial<PrismaUser> {
     discordId: string;
+  }
+  interface Session extends DefaultSession {
+    user?: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      discordId: string;
+    };
   }
 }

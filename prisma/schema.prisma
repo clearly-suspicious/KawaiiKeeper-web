@@ -45,7 +45,7 @@ model Session {
 
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  discordId     String?   @unique
+  discordId     String    @unique
   verified      Boolean?
   emailVerified DateTime?
   name          String?
@@ -57,7 +57,7 @@ model User {
 
 model InternalUser {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  discordId    String?       @unique
+  discordId    String        @unique
   name         String?
   ageVerified  Boolean?
   apiKey       ApiKey?
