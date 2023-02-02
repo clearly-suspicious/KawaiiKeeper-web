@@ -4,12 +4,13 @@ import { FieldValues, useForm } from "react-hook-form";
 import Button from "./base/Button";
 import { Dialog } from "./base/Dialog";
 import Sparkles from "./svgs/Sparkles";
+import { TOKENS_PER_DOLLAR } from "../server/constants";
 import { fetchPostJSON } from "../utils/api-helpers";
 import getStripe from "../utils/get-stripejs";
 
 const BuyTokenDialog = ({
   title = "Support Kawaii Keeper",
-  subtitle = "Thank you for considering buying tokens to support the project. 25 tokens = $1. You can use 1 token to generate a random prompt.",
+  subtitle = `Thank you for considering buying tokens to support the project. $1 = ${TOKENS_PER_DOLLAR} tokens. You can use 1 token to generate an image for a random prompt.`,
   trigger = (
     <Button
       className="border-[#A38A4C] hover:border-[#443C26] hover:bg-[#443C26]"
