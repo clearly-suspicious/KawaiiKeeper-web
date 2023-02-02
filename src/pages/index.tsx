@@ -4,22 +4,16 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import Button from "../components/base/Button";
 import Header from "../components/Header";
-import ImageCard from "../components/ImageCard";
 import Seo from "../components/Seo";
-import { api } from "../utils/api";
 import { shuffle } from "../utils/helpers";
 
 const Home = () => {
   const TOTAL_PHOTOS = 25;
   const { data: sessionData } = useSession();
-  const getPopularPhotos = api.photos.getMostLikedPhotos.useQuery({
-    limit: 25,
-  });
+
   const router = useRouter();
 
   const ImageColumn = ({
-    start,
-    end,
     offset = false,
   }: {
     start: number;
@@ -34,25 +28,19 @@ const Home = () => {
             : ""
         } flex flex-col space-y-4 xl:space-y-8`}
       >
-        {getPopularPhotos.data && getPopularPhotos.isLoading === false
-          ? shuffle(getPopularPhotos.data.data.slice(start, end)).map(
-              (photo) => (
-                <div
-                  key={photo.id}
-                  className="relative aspect-square w-full overflow-hidden"
-                >
-                  <Image
-                    src={photo.url as string}
-                    fill
-                    alt={photo.prompt}
-                    sizes="512px"
-                  />
-                </div>
-              )
-            )
-          : [...Array(Math.abs(end - start)).keys()].map((i) => (
-              <ImageCard key={i} loading={true} />
-            ))}
+        {shuffle([...Array(25).keys()]).map((photo, i) => (
+          <div
+            key={photo.id}
+            className="relative aspect-square w-full overflow-hidden"
+          >
+            <Image
+              src={`./images/landing-page/image (${i}).png`}
+              fill
+              alt={photo.prompt}
+              sizes="512px"
+            />
+          </div>
+        ))}
       </div>
     );
   };
@@ -89,41 +77,35 @@ const Home = () => {
         </div>
       </main>
       <div className="absolute inset-0 -z-[5] min-h-screen [background:linear-gradient(180deg,#000000_38%,rgba(0,0,0,0)_128%)] " />
-      {getPopularPhotos.data ? (
+
+      <div
+        className="perps absolute inset-0 -z-10 h-screen max-h-screen overflow-hidden"
+        style={{ perspective: "1000px" }}
+      >
         <div
-          className="perps absolute inset-0 -z-10 h-screen max-h-screen overflow-hidden"
-          style={{ perspective: "1000px" }}
+          className="absolute right-[50%] top-[50%] w-[240vw] columns-5 gap-4 md:w-[180vw] lg:w-[120vw] xl:gap-8" //the gap here should be same as space-y-[] in ImageColumn
+          style={{
+            transform: "translateX(50%) translateY(-50%) rotateX(36deg)",
+          }}
         >
-          <div
-            className="absolute right-[50%] top-[50%] w-[240vw] columns-5 gap-4 md:w-[180vw] lg:w-[120vw] xl:gap-8" //the gap here should be same as space-y-[] in ImageColumn
-            style={{
-              transform: "translateX(50%) translateY(-50%) rotateX(36deg)",
-            }}
-          >
-            <ImageColumn offset start={0} end={TOTAL_PHOTOS / 5} />
-            <ImageColumn
-              start={TOTAL_PHOTOS / 5}
-              end={(2 * TOTAL_PHOTOS) / 5}
-            />
-            <ImageColumn
-              offset
-              start={(2 * TOTAL_PHOTOS) / 5}
-              end={(3 * TOTAL_PHOTOS) / 5}
-            />
-            <ImageColumn
-              start={(3 * TOTAL_PHOTOS) / 5}
-              end={(4 * TOTAL_PHOTOS) / 5}
-            />
-            <ImageColumn
-              offset
-              start={(4 * TOTAL_PHOTOS) / 5}
-              end={(5 * TOTAL_PHOTOS) / 5}
-            />
-          </div>
+          <ImageColumn offset start={0} end={TOTAL_PHOTOS / 5} />
+          <ImageColumn start={TOTAL_PHOTOS / 5} end={(2 * TOTAL_PHOTOS) / 5} />
+          <ImageColumn
+            offset
+            start={(2 * TOTAL_PHOTOS) / 5}
+            end={(3 * TOTAL_PHOTOS) / 5}
+          />
+          <ImageColumn
+            start={(3 * TOTAL_PHOTOS) / 5}
+            end={(4 * TOTAL_PHOTOS) / 5}
+          />
+          <ImageColumn
+            offset
+            start={(4 * TOTAL_PHOTOS) / 5}
+            end={(5 * TOTAL_PHOTOS) / 5}
+          />
         </div>
-      ) : (
-        <></>
-      )}
+      </div>
     </>
   );
 };
