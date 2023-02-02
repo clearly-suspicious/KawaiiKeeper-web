@@ -38,7 +38,7 @@ const Home = () => {
             : ""
         } flex flex-col space-y-4 xl:space-y-8`}
       >
-        {shuffle(range(start + 1, end + 1)).map((index, i) => (
+        {shuffle(range(start, end)).map((index, i) => (
           <div
             key={i}
             className="relative aspect-square w-full overflow-hidden"
@@ -98,7 +98,7 @@ const Home = () => {
             transform: "translateX(50%) translateY(-50%) rotateX(36deg)",
           }}
         >
-          <ImageColumn offset start={0} end={TOTAL_PHOTOS / 5} />
+          <ImageColumn offset start={1} end={TOTAL_PHOTOS / 5} />
           <ImageColumn start={TOTAL_PHOTOS / 5} end={(2 * TOTAL_PHOTOS) / 5} />
           <ImageColumn
             offset
