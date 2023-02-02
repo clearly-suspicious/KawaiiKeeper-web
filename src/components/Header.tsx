@@ -95,7 +95,7 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
                   />
                 </Button>
               }
-              userId={sessionData?.user?.discordId}
+              discordId={sessionData?.user?.discordId}
             />
           </div>
           {sessionData ? (

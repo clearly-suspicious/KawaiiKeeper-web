@@ -12,7 +12,7 @@ type BuyTokenDialogProps = {
   title?: string;
   subtitle?: string;
   trigger?: React.ReactNode;
-  userId?: string;
+  discordId?: string;
 };
 
 const BuyTokenDialog = ({
@@ -29,7 +29,7 @@ const BuyTokenDialog = ({
       </div>
     </Button>
   ),
-  userId = undefined,
+  discordId = undefined,
 }: BuyTokenDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -50,7 +50,7 @@ const BuyTokenDialog = ({
         },
       ],
       currentUrl: window.location.pathname,
-      clientReferenceId: userId,
+      discordId: discordId,
     });
 
     if (response.statusCode === 500) {
