@@ -19,9 +19,11 @@ export const paymentsRouter = router({
       return aggregations._sum.amount as number;
     }),
 
-  createPayment: protectedProcedure
-    .input(z.custom<Stripe.Charge>())
+  createPayment: publicProcedure
+    .input(z.custom<Stripe.Charge & { userId?: string }>())
     .mutation(async ({ input, ctx }) => {
+      const userId = input.userId;
+      delete input.userId;
       const charge = input;
       const payment = await ctx.prisma.payments.create({
         data: {
@@ -33,7 +35,7 @@ export const paymentsRouter = router({
 
       const user = await ctx.prisma.user.findFirst({
         where: {
-          OR: [{ email: payment.emailId }, { id: ctx.user.id }],
+          OR: [{ email: payment.emailId }, { id: userId }],
         },
       });
 

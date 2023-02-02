@@ -35,6 +35,7 @@ export default async function handler(
         line_items,
         success_url: `${req.headers.origin}/result?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.headers.origin}/${req.body.currentUrl ?? ""}`,
+        client_reference_id: req.body.clientReferenceId,
       };
 
       const checkoutSession: Stripe.Checkout.Session =

@@ -95,6 +95,7 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
                   />
                 </Button>
               }
+              userId={sessionData?.user?.id}
             />
           </div>
           {sessionData ? (

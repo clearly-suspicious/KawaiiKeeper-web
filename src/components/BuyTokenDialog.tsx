@@ -8,6 +8,13 @@ import { TOKENS_PER_DOLLAR } from "../server/constants";
 import { fetchPostJSON } from "../utils/api-helpers";
 import getStripe from "../utils/get-stripejs";
 
+type BuyTokenDialogProps = {
+  title?: string;
+  subtitle?: string;
+  trigger?: React.ReactNode;
+  userId?: string;
+};
+
 const BuyTokenDialog = ({
   title = "Support Kawaii Keeper",
   subtitle = `Thank you for considering buying tokens to support the project. $1 = ${TOKENS_PER_DOLLAR} tokens. You can use 1 token to generate an image for a random prompt.`,
@@ -22,7 +29,8 @@ const BuyTokenDialog = ({
       </div>
     </Button>
   ),
-}) => {
+  userId = undefined,
+}: BuyTokenDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     register,
@@ -42,6 +50,7 @@ const BuyTokenDialog = ({
         },
       ],
       currentUrl: window.location.pathname,
+      clientReferenceId: userId,
     });
 
     if (response.statusCode === 500) {
