@@ -62,6 +62,11 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       const charge = event.data.object as Stripe.Charge;
       console.log(`💵 Charge id: ${charge.id}`);
 
+      const PaymentIntent = await stripe.paymentIntents.retrieve(
+        charge.payment_intent as string
+      );
+      console.log("PaymentIntent", PaymentIntent);
+
       const caller = appRouter.createCaller(
         await createTRPCContext({ req, res })
       );
