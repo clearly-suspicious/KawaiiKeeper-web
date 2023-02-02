@@ -3,7 +3,8 @@ import Cors from "micro-cors";
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
-import { prisma } from "../../../server/db";
+import { appRouter } from "../../../server/api/root";
+import { createTRPCContext } from "../../../server/api/trpc";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // https://github.com/stripe/stripe-node#configuration
@@ -61,25 +62,11 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       const charge = event.data.object as Stripe.Charge;
       console.log(`💵 Charge id: ${charge.id}`);
 
-      const payment = await prisma.payments.create({
-        data: {
-          name: charge.billing_details.name as string,
-          emailId: charge.billing_details.email as string,
-          amount: (charge.amount as number) / 100,
-        },
-      });
-      if (payment.amount) {
-        await prisma.internalUser.update({
-          where: {
-            id: payment.id,
-          },
-          data: {
-            tokens: {
-              increment: payment.amount * 25,
-            },
-          },
-        });
-      }
+      const caller = appRouter.createCaller(
+        await createTRPCContext({ req, res })
+      );
+
+      await caller.payments.createPayment(charge);
     } else {
       console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
     }

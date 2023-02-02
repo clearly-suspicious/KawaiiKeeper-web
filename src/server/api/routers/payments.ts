@@ -1,3 +1,4 @@
+import Stripe from "stripe";
 import { z } from "zod";
 
 import { protectedProcedure, publicProcedure, router } from "./../trpc";
@@ -15,6 +16,37 @@ export const paymentsRouter = router({
         },
       });
       return aggregations._sum.amount as number;
+    }),
+
+  createPayment: protectedProcedure
+    .input(z.custom<Stripe.Charge>())
+    .mutation(async ({ input, ctx }) => {
+      const charge = input;
+      const payment = await ctx.prisma.payments.create({
+        data: {
+          name: charge.billing_details.name as string,
+          emailId: charge.billing_details.email as string,
+          amount: (charge.amount as number) / 100,
+        },
+      });
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          OR: [{ email: payment.emailId }, { id: ctx.user.id }],
+        },
+      });
+
+      if (user) {
+        await ctx.prisma.internalUser.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            tokens: {
+              increment: payment.amount * 25,
+            },
+          },
+        });
+      }
     }),
 
   checkEligibility: protectedProcedure
