@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import Stripe from "stripe";
 import { z } from "zod";
 
@@ -33,12 +34,20 @@ export const paymentsRouter = router({
           amount: (charge.amount as number) / 100,
         },
       });
-
-      const user = await ctx.prisma.user.findFirst({
-        where: {
-          OR: [{ email: payment.emailId }, { discordId }],
-        },
-      });
+      let user: null | User = null;
+      if (discordId) {
+        user = await ctx.prisma.user.findFirst({
+          where: {
+            discordId,
+          },
+        });
+      } else {
+        user = await ctx.prisma.user.findFirst({
+          where: {
+            email: payment.emailId,
+          },
+        });
+      }
 
       if (user) {
         await ctx.prisma.internalUser.update({
