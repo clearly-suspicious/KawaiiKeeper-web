@@ -2,6 +2,7 @@ import Stripe from "stripe";
 import { z } from "zod";
 
 import { protectedProcedure, publicProcedure, router } from "./../trpc";
+import { TOKENS_PER_DOLLAR } from "../../constants";
 import { checkEligibility } from "../../../utils/transactions";
 
 const TransactionType = z.enum(["TXT2IMG", "IMG2IMG", "CHATBOT"]);
@@ -29,6 +30,7 @@ export const paymentsRouter = router({
           amount: (charge.amount as number) / 100,
         },
       });
+
       const user = await ctx.prisma.user.findFirst({
         where: {
           OR: [{ email: payment.emailId }, { id: ctx.user.id }],
@@ -42,7 +44,7 @@ export const paymentsRouter = router({
           },
           data: {
             tokens: {
-              increment: payment.amount * 25,
+              increment: payment.amount * TOKENS_PER_DOLLAR,
             },
           },
         });
