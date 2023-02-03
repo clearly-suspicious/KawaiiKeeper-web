@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
-import { formatAmountForStripe } from "../../../utils/stripe-helpers";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // https://github.com/stripe/stripe-node#configuration
   apiVersion: "2022-11-15",
@@ -16,15 +15,19 @@ export default async function handler(
 
     try {
       const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
-        cart.map((item: any) => {
-          return {
-            price_data: {
-              currency: "usd",
-              product_data: {
-                name: item.name,
-              },
-              unit_amount: formatAmountForStripe(item.price, "usd"),
+        cart.map(async (item: any) => {
+          const price = await stripe.prices.create({
+            unit_amount: item.price * 100,
+            currency: "usd",
+            product: "{{PRODUCT_ID}}",
+            currency_options: {
+              eur: { unit_amount: item.price * 92 },
+              jpy: { unit_amount: item.price * 13000 },
+              inr: { unit_amount: item.price * 8000 },
             },
+          });
+          return {
+            price: price.id,
             quantity: item.quantity ?? 1,
           };
         });
