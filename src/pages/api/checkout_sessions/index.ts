@@ -14,12 +14,15 @@ export default async function handler(
     const { cart } = req.body;
 
     try {
+      const product = await stripe.products.create({
+        name: "Support Kawaii Keeper",
+      });
       const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
         cart.map(async (item: any) => {
           const price = await stripe.prices.create({
             unit_amount: item.price * 100,
             currency: "usd",
-            product: "{{PRODUCT_ID}}",
+            product: product.id,
             currency_options: {
               eur: { unit_amount: item.price * 92 },
               jpy: { unit_amount: item.price * 13000 },
