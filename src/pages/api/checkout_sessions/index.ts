@@ -17,8 +17,8 @@ export default async function handler(
       const product = await stripe.products.create({
         name: "Support Kawaii Keeper",
       });
-      const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
-        cart.map(async (item: any) => {
+      const line_item_promises: Stripe.Checkout.SessionCreateParams.LineItem[] =
+        cart.forEach(async (item: any) => {
           const price = await stripe.prices.create({
             unit_amount: item.price * 100,
             currency: "usd",
@@ -34,6 +34,8 @@ export default async function handler(
             quantity: item.quantity ?? 1,
           };
         });
+
+      const line_items = await Promise.all(line_item_promises);
       // Create Checkout Sessions from body params.
       const params: Stripe.Checkout.SessionCreateParams = {
         mode: "payment",
