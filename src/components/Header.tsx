@@ -90,8 +90,8 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
                   </div>
                   <ProgressBar
                     progress={totalDonated.data ?? 0}
-                    totalProgress={5000}
-                    title="3 Month Goal"
+                    totalProgress={1200}
+                    title="1 Month Goal"
                   />
                 </Button>
               }

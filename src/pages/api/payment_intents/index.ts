@@ -56,7 +56,8 @@ export default async function handler(
     const params: Stripe.PaymentIntentCreateParams = {
       amount: formatAmountForStripe(amount, CURRENCY),
       currency: CURRENCY,
-      description: process.env.STRIPE_PAYMENT_DESCRIPTION ?? "",
+      description:
+        process.env.STRIPE_PAYMENT_DESCRIPTION ?? "Kawaii Keeper services",
       automatic_payment_methods: {
         enabled: true,
       },
