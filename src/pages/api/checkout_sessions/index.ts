@@ -17,25 +17,31 @@ export default async function handler(
       const product = await stripe.products.create({
         name: "Support Kawaii Keeper",
       });
-      const line_item_promises: Stripe.Checkout.SessionCreateParams.LineItem[] =
-        cart.forEach(async (item: any) => {
-          const price = await stripe.prices.create({
-            unit_amount: item.price * 100,
-            currency: "usd",
-            product: product.id,
-            currency_options: {
-              eur: { unit_amount: item.price * 92 },
-              jpy: { unit_amount: item.price * 13000 },
-              inr: { unit_amount: item.price * 8000 },
-            },
-          });
+
+      const price_promises = cart.map(async (item: any) => {
+        const price = await stripe.prices.create({
+          unit_amount: item.price * 100,
+          currency: "usd",
+          product: product.id,
+          currency_options: {
+            eur: { unit_amount: item.price * 92 },
+            jpy: { unit_amount: item.price * 13000 },
+            inr: { unit_amount: item.price * 8000 },
+          },
+        });
+        return price;
+      });
+
+      const prices = await Promise.all(price_promises);
+      const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
+        cart.map((item: any, i: number) => {
           return {
-            price: price.id,
+            price: prices[i].id,
             quantity: item.quantity ?? 1,
           };
         });
 
-      const line_items = await Promise.all(line_item_promises);
+      console.log(line_items);
       // Create Checkout Sessions from body params.
       const params: Stripe.Checkout.SessionCreateParams = {
         mode: "payment",
