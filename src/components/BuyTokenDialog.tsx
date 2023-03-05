@@ -124,7 +124,7 @@ const BuyTokenDialog = ({
         onSubmit={handleSubmit(onSubmit)}
         className=' flex  flex-col text-gray-200'
       >
-        <div className='mb-8 mt-4 flex flex-col items-center space-x-2 space-y-2 sm:flex-row sm:space-y-0'>
+        <div className='mb-8 mt-4 flex flex-col items-start space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-0'>
           <div className='flex items-center space-x-2'>
             <RadioTextCard name='amount' text='$2' value={2} />
             <RadioTextCard name='amount' text='$5' value={5} />
