@@ -13,6 +13,8 @@ type BuyTokenDialogProps = {
   subtitle?: string;
   trigger?: React.ReactNode;
   discordId?: string;
+  isOpen?: boolean;
+  setIsOpen?: (isOpen: boolean) => void;
 };
 
 const BuyTokenDialog = ({
@@ -30,8 +32,11 @@ const BuyTokenDialog = ({
     </Button>
   ),
   discordId = undefined,
+  isOpen: isOpenProp,
+  setIsOpen: setIsOpenProp,
 }: BuyTokenDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
   const { register, handleSubmit, resetField, watch } = useForm();
 
   const watchAmount = watch("amount");
@@ -111,8 +116,8 @@ const BuyTokenDialog = ({
     <Dialog
       title={title}
       subtitle={subtitle}
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
+      isOpen={isOpenProp ?? isOpen}
+      setIsOpen={setIsOpenProp ?? setIsOpen}
       trigger={trigger}
     >
       <form
@@ -140,7 +145,9 @@ const BuyTokenDialog = ({
         </div>
         <div className='flex space-x-2 self-end'>
           <Button
-            onClick={() => setIsOpen(false)}
+            onClick={() =>
+              setIsOpenProp ? setIsOpenProp(false) : setIsOpen(false)
+            }
             className='border-red-800 text-red-500 hover:border-red-600 hover:bg-red-900 hover:text-gray-100'
           >
             Cancel

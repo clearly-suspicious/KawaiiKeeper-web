@@ -1,8 +1,10 @@
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Session } from "next-auth";
-import { signIn } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import Button from "./base/Button";
@@ -10,19 +12,66 @@ import BuyTokenDialog from "./BuyTokenDialog";
 import Sparkles from "./svgs/Sparkles";
 import { api } from "../utils/api";
 
+type RightButtons =
+  | Omit<
+      React.ComponentPropsWithoutRef<typeof Button> &
+        Partial<DropdownMenu.DropdownMenuItemProps> & {
+          children: React.ReactNode;
+        },
+      "onClick"
+    >
+  | undefined;
+
 type Props = {
   sessionData?: Session | null;
-  rightButtons?: React.ReactElement[];
+  rightButtons?: RightButtons[];
 };
 
-const DiscordLoogo = ({ className }: { className?: string }) => {
+const DiscordLogo = ({ className }: { className?: string }) => {
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 50 50"
+      xmlns='http://www.w3.org/2000/svg'
+      viewBox='0 0 50 50'
       className={twMerge("h-6 w-6 fill-[#FFF]", className)}
     >
-      <path d="M 41.625 10.769531 C 37.644531 7.566406 31.347656 7.023438 31.078125 7.003906 C 30.660156 6.96875 30.261719 7.203125 30.089844 7.589844 C 30.074219 7.613281 29.9375 7.929688 29.785156 8.421875 C 32.417969 8.867188 35.652344 9.761719 38.578125 11.578125 C 39.046875 11.867188 39.191406 12.484375 38.902344 12.953125 C 38.710938 13.261719 38.386719 13.429688 38.050781 13.429688 C 37.871094 13.429688 37.6875 13.378906 37.523438 13.277344 C 32.492188 10.15625 26.210938 10 25 10 C 23.789063 10 17.503906 10.15625 12.476563 13.277344 C 12.007813 13.570313 11.390625 13.425781 11.101563 12.957031 C 10.808594 12.484375 10.953125 11.871094 11.421875 11.578125 C 14.347656 9.765625 17.582031 8.867188 20.214844 8.425781 C 20.0625 7.929688 19.925781 7.617188 19.914063 7.589844 C 19.738281 7.203125 19.34375 6.960938 18.921875 7.003906 C 18.652344 7.023438 12.355469 7.566406 8.320313 10.8125 C 6.214844 12.761719 2 24.152344 2 34 C 2 34.175781 2.046875 34.34375 2.132813 34.496094 C 5.039063 39.605469 12.972656 40.941406 14.78125 41 C 14.789063 41 14.800781 41 14.8125 41 C 15.132813 41 15.433594 40.847656 15.621094 40.589844 L 17.449219 38.074219 C 12.515625 36.800781 9.996094 34.636719 9.851563 34.507813 C 9.4375 34.144531 9.398438 33.511719 9.765625 33.097656 C 10.128906 32.683594 10.761719 32.644531 11.175781 33.007813 C 11.234375 33.0625 15.875 37 25 37 C 34.140625 37 38.78125 33.046875 38.828125 33.007813 C 39.242188 32.648438 39.871094 32.683594 40.238281 33.101563 C 40.601563 33.515625 40.5625 34.144531 40.148438 34.507813 C 40.003906 34.636719 37.484375 36.800781 32.550781 38.074219 L 34.378906 40.589844 C 34.566406 40.847656 34.867188 41 35.1875 41 C 35.199219 41 35.210938 41 35.21875 41 C 37.027344 40.941406 44.960938 39.605469 47.867188 34.496094 C 47.953125 34.34375 48 34.175781 48 34 C 48 24.152344 43.785156 12.761719 41.625 10.769531 Z M 18.5 30 C 16.566406 30 15 28.210938 15 26 C 15 23.789063 16.566406 22 18.5 22 C 20.433594 22 22 23.789063 22 26 C 22 28.210938 20.433594 30 18.5 30 Z M 31.5 30 C 29.566406 30 28 28.210938 28 26 C 28 23.789063 29.566406 22 31.5 22 C 33.433594 22 35 23.789063 35 26 C 35 28.210938 33.433594 30 31.5 30 Z" />
+      <path d='M 41.625 10.769531 C 37.644531 7.566406 31.347656 7.023438 31.078125 7.003906 C 30.660156 6.96875 30.261719 7.203125 30.089844 7.589844 C 30.074219 7.613281 29.9375 7.929688 29.785156 8.421875 C 32.417969 8.867188 35.652344 9.761719 38.578125 11.578125 C 39.046875 11.867188 39.191406 12.484375 38.902344 12.953125 C 38.710938 13.261719 38.386719 13.429688 38.050781 13.429688 C 37.871094 13.429688 37.6875 13.378906 37.523438 13.277344 C 32.492188 10.15625 26.210938 10 25 10 C 23.789063 10 17.503906 10.15625 12.476563 13.277344 C 12.007813 13.570313 11.390625 13.425781 11.101563 12.957031 C 10.808594 12.484375 10.953125 11.871094 11.421875 11.578125 C 14.347656 9.765625 17.582031 8.867188 20.214844 8.425781 C 20.0625 7.929688 19.925781 7.617188 19.914063 7.589844 C 19.738281 7.203125 19.34375 6.960938 18.921875 7.003906 C 18.652344 7.023438 12.355469 7.566406 8.320313 10.8125 C 6.214844 12.761719 2 24.152344 2 34 C 2 34.175781 2.046875 34.34375 2.132813 34.496094 C 5.039063 39.605469 12.972656 40.941406 14.78125 41 C 14.789063 41 14.800781 41 14.8125 41 C 15.132813 41 15.433594 40.847656 15.621094 40.589844 L 17.449219 38.074219 C 12.515625 36.800781 9.996094 34.636719 9.851563 34.507813 C 9.4375 34.144531 9.398438 33.511719 9.765625 33.097656 C 10.128906 32.683594 10.761719 32.644531 11.175781 33.007813 C 11.234375 33.0625 15.875 37 25 37 C 34.140625 37 38.78125 33.046875 38.828125 33.007813 C 39.242188 32.648438 39.871094 32.683594 40.238281 33.101563 C 40.601563 33.515625 40.5625 34.144531 40.148438 34.507813 C 40.003906 34.636719 37.484375 36.800781 32.550781 38.074219 L 34.378906 40.589844 C 34.566406 40.847656 34.867188 41 35.1875 41 C 35.199219 41 35.210938 41 35.21875 41 C 37.027344 40.941406 44.960938 39.605469 47.867188 34.496094 C 47.953125 34.34375 48 34.175781 48 34 C 48 24.152344 43.785156 12.761719 41.625 10.769531 Z M 18.5 30 C 16.566406 30 15 28.210938 15 26 C 15 23.789063 16.566406 22 18.5 22 C 20.433594 22 22 23.789063 22 26 C 22 28.210938 20.433594 30 18.5 30 Z M 31.5 30 C 29.566406 30 28 28.210938 28 26 C 28 23.789063 29.566406 22 31.5 22 C 33.433594 22 35 23.789063 35 26 C 35 28.210938 33.433594 30 31.5 30 Z' />
+    </svg>
+  );
+};
+
+export const HamburgerMenuIcon = ({ className }: { className?: string }) => {
+  return (
+    <svg
+      viewBox='0 0 15 15'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+      className={twMerge("aspect-square w-[15px]", className)}
+    >
+      <path
+        d='M1.5 3C1.22386 3 1 3.22386 1 3.5C1 3.77614 1.22386 4 1.5 4H13.5C13.7761 4 14 3.77614 14 3.5C14 3.22386 13.7761 3 13.5 3H1.5ZM1 7.5C1 7.22386 1.22386 7 1.5 7H13.5C13.7761 7 14 7.22386 14 7.5C14 7.77614 13.7761 8 13.5 8H1.5C1.22386 8 1 7.77614 1 7.5ZM1 11.5C1 11.2239 1.22386 11 1.5 11H13.5C13.7761 11 14 11.2239 14 11.5C14 11.7761 13.7761 12 13.5 12H1.5C1.22386 12 1 11.7761 1 11.5Z'
+        fill='currentColor'
+        fill-rule='evenodd'
+        clip-rule='evenodd'
+      ></path>
+    </svg>
+  );
+};
+
+export const ChevronRightIcon = () => {
+  return (
+    <svg
+      width='15'
+      height='15'
+      viewBox='0 0 15 15'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+    >
+      <path
+        d='M6.1584 3.13508C6.35985 2.94621 6.67627 2.95642 6.86514 3.15788L10.6151 7.15788C10.7954 7.3502 10.7954 7.64949 10.6151 7.84182L6.86514 11.8418C6.67627 12.0433 6.35985 12.0535 6.1584 11.8646C5.95694 11.6757 5.94673 11.3593 6.1356 11.1579L9.565 7.49985L6.1356 3.84182C5.94673 3.64036 5.95694 3.32394 6.1584 3.13508Z'
+        fill='currentColor'
+        fill-rule='evenodd'
+        clip-rule='evenodd'
+      ></path>
     </svg>
   );
 };
@@ -38,16 +87,16 @@ const ProgressBar = ({
   title = "Monthly Goal",
 }: ProgressBarProps) => {
   return (
-    <div className="mt-[-2px] flex flex-col">
-      <div className="flex justify-between space-x-8 text-[12px] font-light text-[#F8CD7B]">
+    <div className='mt-[-2px] flex flex-col'>
+      <div className='flex justify-between space-x-8 text-[12px] font-light text-[#F8CD7B]'>
         <span>{title}</span>
         <span>
           ${progress}/{totalProgress}
         </span>
       </div>
-      <div className="relative h-[4px] w-full overflow-hidden rounded-full border border-[#F8CD7B] bg-transparent">
+      <div className='relative h-[4px] w-full overflow-hidden rounded-full border border-[#F8CD7B] bg-transparent'>
         <div
-          className="h-full rounded-full bg-[#F8CD7B] transition-[width] duration-500 ease-in-out"
+          className='h-full rounded-full bg-[#F8CD7B] transition-[width] duration-500 ease-in-out'
           style={{ width: `${(progress / totalProgress) * 100}%` }}
         />
       </div>
@@ -58,73 +107,148 @@ const ProgressBar = ({
 const Header = ({ sessionData, rightButtons = [] }: Props) => {
   const router = useRouter();
   const totalDonated = api.payments.aggregateDonations.useQuery();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <div className="w-full px-5 xl:px-12">
-      <div className="mt-2 flex items-center  justify-between py-6 text-white lg:py-6">
-        <Link href="/">
-          <div className="text-[18px] lg:text-[24px]">KawaiiKeeper</div>
+    <div className='w-full px-5 xl:px-12'>
+      <div className='mt-2 flex items-center  justify-between py-6 text-white lg:py-6'>
+        <Link href='/'>
+          <div className='text-[18px] lg:text-[24px]'>KawaiiKeeper</div>
         </Link>
-        <div className="flex items-center">
-          <div className="mr-8 hidden items-center space-x-4 sm:flex">
-            {rightButtons
-              ?.filter((button) => button.type === Button)
-              .map((button) => (
-                <>{button}</>
-              ))}
+        <div className='flex items-center'>
+          {/* Have to do this scam because a dialog in a dropdown breaks */}
+          <BuyTokenDialog
+            title='Donate to our project 💖'
+            subtitle=" Your support for us through donations allows Kawaii Keeper to keep
+                  running. We haven't decided on the rewards yet but for now we will
+                  add an equivalent amount of tokens to your account in return for
+                  your support! Thank you for considering a donation."
+            isOpen={isDialogOpen}
+            setIsOpen={setIsDialogOpen}
+            trigger={<> </>}
+            discordId={sessionData?.user?.discordId}
+          />
+          <div className='mr-8 hidden items-center space-x-4 sm:flex'>
+            {rightButtons.filter(Boolean).map((button, i) => {
+              const { children, onSelect, ...rest } = button;
+              return (
+                <Button key={i} onClick={onSelect} {...rest}>
+                  {children}
+                </Button>
+              );
+            })}
 
             <BuyTokenDialog
-              title="Donate to our project 💖"
+              title='Donate to our project 💖'
               subtitle=" Your support for us through donations allows Kawaii Keeper to keep
               running. We haven't decided on the rewards yet but for now we will
               add an equivalent amount of tokens to your account in return for
               your support! Thank you for considering a donation."
               trigger={
                 <Button
-                  className="border-[#A38A4C] hover:border-[#443C26] hover:bg-[#443C26]"
-                  type="button"
+                  className='border-[#A38A4C] hover:border-[#443C26] hover:bg-[#443C26]'
+                  type='button'
                 >
-                  <div className="mr-4 flex items-center space-x-1 text-[#F8CD7B]">
+                  <div className='mr-4 flex items-center space-x-1 text-[#F8CD7B]'>
                     <div>Donate</div>
-                    <Sparkles className="h-5 w-5" />
+                    <Sparkles className='h-5 w-5' />
                   </div>
                   <ProgressBar
                     progress={totalDonated.data ?? 0}
                     totalProgress={1200}
-                    title="1 Month Goal"
+                    title='1 Month Goal'
                   />
                 </Button>
               }
               discordId={sessionData?.user?.discordId}
             />
           </div>
+
           {sessionData ? (
             <button
-              type="button"
+              type='button'
               onClick={() => router.push("/profile")}
-              className="relative aspect-square w-[32px] overflow-hidden rounded-full md:w-[38px] lg:w-[46px]"
+              className='relative aspect-square w-[32px] overflow-hidden rounded-full md:w-[38px] lg:w-[46px]'
             >
               <Image
                 width={1200}
                 height={800}
                 src={sessionData.user?.image as string}
-                alt="avatar"
-                className=""
+                alt='avatar'
+                className=''
               />
             </button>
           ) : (
             <Button
-              className="space-x-2"
+              className='space-x-2'
               key={1}
               onClick={() => signIn("discord")}
             >
-              <DiscordLoogo />
+              <DiscordLogo />
               <span> Log in </span>
             </Button>
           )}
+          <div className='ml-2 sm:hidden'>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <button
+                  className='inline-flex h-[35px] w-[35px] items-center justify-center rounded-full  shadow-blackA7 outline-none  focus:shadow-[0_0_0_2px] focus:shadow-black'
+                  aria-label='Customise options'
+                >
+                  <HamburgerMenuIcon className='w-[20px] fill-white' />
+                </button>
+              </DropdownMenu.Trigger>
+
+              <DropdownMenu.Portal>
+                <DropdownMenu.Content
+                  className='m-4 min-w-[220px] rounded-md border border-gray-800 bg-[rgba(0,0,0,0.64)] p-[5px] backdrop-blur-lg will-change-[opacity,transform] data-[side=top]:animate-dropdownSlideDownAndFade data-[side=right]:animate-dropdownSlideLeftAndFade data-[side=bottom]:animate-dropdownSlideUpAndFade data-[side=left]:animate-dropdownSlideRightAndFade'
+                  sideOffset={5}
+                >
+                  {rightButtons.filter(Boolean).map((button, index) => (
+                    <DropdownMenu.Item
+                      key={index}
+                      className={twMerge(
+                        "group relative my-2 flex h-[24px] select-none items-center rounded-[3px] px-[5px] pl-[18px] text-[13px] leading-none text-gray-200 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-600 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1",
+                        button.className
+                      )}
+                      onSelect={button.onSelect}
+                    >
+                      <>{button.children}</>
+                    </DropdownMenu.Item>
+                  ))}
+                  {sessionData && (
+                    <DropdownMenu.Item
+                      className={twMerge(
+                        "group relative my-2 flex h-[24px] select-none items-center rounded-[3px] px-[5px] pl-[18px] text-[13px] leading-none text-gray-200 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-600 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1"
+                      )}
+                      onClick={() => signOut()}
+                    >
+                      Log out
+                    </DropdownMenu.Item>
+                  )}
+                  <DropdownMenu.Item
+                    className={twMerge(
+                      "group relative flex h-[24px] select-none items-center rounded-[3px] border border-[rgba(248,205,123,0.4)] py-4  px-[18px] text-[13px] leading-none text-gray-200 data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-600 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1"
+                    )}
+                    onSelect={() => setIsDialogOpen(true)}
+                  >
+                    <div className='mr-4 flex items-center space-x-1 text-[#F8CD7B]'>
+                      <div>Donate</div>
+                      <Sparkles className='h-5 w-5' />
+                    </div>
+                    <ProgressBar
+                      progress={totalDonated.data ?? 0}
+                      totalProgress={1200}
+                      title='1 Month Goal'
+                    />
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Portal>
+            </DropdownMenu.Root>
+          </div>
         </div>
       </div>
-      <div className="mt-[-1px] h-[1px] w-full bg-[#868686]" />
+      <div className='mt-[-1px] h-[1px] w-full bg-[#868686]' />
     </div>
   );
 };

@@ -41,13 +41,13 @@ const Home = () => {
         {shuffle(range(start, end)).map((index, i) => (
           <div
             key={i}
-            className="relative aspect-square w-full overflow-hidden"
+            className='relative aspect-square w-full overflow-hidden'
           >
             <Image
               src={`/images/landing-page/image (${index}).png`}
               fill
-              alt="Popular background image"
-              sizes="512px"
+              alt='Popular background image'
+              sizes='512px'
             />
           </div>
         ))}
@@ -60,23 +60,22 @@ const Home = () => {
       <Header
         sessionData={sessionData}
         rightButtons={[
-          sessionData ? (
-            <Button key={1} onClick={() => router.push("/app")}>
-              <> Go to App </>
-            </Button>
-          ) : (
-            <></>
-          ),
+          sessionData
+            ? {
+                children: <> Go to App </>,
+                onSelect: () => router.push("/app"),
+              }
+            : undefined,
         ]}
       />
-      <main className=" relative grid w-full place-items-center overflow-hidden ">
-        <div className="container flex w-full flex-col items-center justify-end gap-12 px-4 py-8 lg:py-20 ">
-          <h1 className="max-w-[640px] bg-gradient-to-b from-[#FFFFFFFF] to-[#ececec69] bg-clip-text text-center text-[48px] font-[500] capitalize leading-[105.52%] tracking-[-0.025em] [text-fill-color:transparent] [-webkit-text-fill-color:transparent] [-webkit-background-clip:_text] lg:max-w-[1024px] lg:text-[84px]">
+      <main className=' relative grid w-full place-items-center overflow-hidden '>
+        <div className='container flex w-full flex-col items-center justify-end gap-12 px-4 py-8 lg:py-20 '>
+          <h1 className='max-w-[640px] bg-gradient-to-b from-[#FFFFFFFF] to-[#ececec69] bg-clip-text text-center text-[48px] font-[500] capitalize leading-[105.52%] tracking-[-0.025em] [text-fill-color:transparent] [-webkit-text-fill-color:transparent] [-webkit-background-clip:_text] lg:max-w-[1024px] lg:text-[84px]'>
             Generate your favorite anime characters
           </h1>
 
-          <a href="https://discord.com/api/oauth2/authorize?client_id=1054881371472015370&permissions=8&scope=bot%20applications.commands">
-            <Button className=" border-gray-200 px-6 text-[18px] lg:px-12 lg:py-4 lg:text-[20px]">
+          <a href='https://discord.com/api/oauth2/authorize?client_id=1054881371472015370&permissions=8&scope=bot%20applications.commands'>
+            <Button className=' border-gray-200 px-6 text-[18px] lg:px-12 lg:py-4 lg:text-[20px]'>
               Invite to discord
             </Button>
           </a>
@@ -86,14 +85,14 @@ const Home = () => {
             </div> */}
         </div>
       </main>
-      <div className="absolute inset-0 -z-[5] min-h-screen [background:linear-gradient(180deg,#000000_38%,rgba(0,0,0,0)_128%)] " />
+      <div className='absolute inset-0 -z-[5] min-h-screen [background:linear-gradient(180deg,#000000_38%,rgba(0,0,0,0)_128%)] ' />
 
       <div
-        className="perps absolute inset-0 -z-10 h-screen max-h-screen overflow-hidden"
+        className='perps absolute inset-0 -z-10 h-screen max-h-screen overflow-hidden'
         style={{ perspective: "1000px" }}
       >
         <div
-          className="absolute right-[50%] top-[50%] w-[240vw] columns-5 gap-4 md:w-[180vw] lg:w-[120vw] xl:gap-8" //the gap here should be same as space-y-[] in ImageColumn
+          className='absolute right-[50%] top-[50%] w-[240vw] columns-5 gap-4 md:w-[180vw] lg:w-[120vw] xl:gap-8' //the gap here should be same as space-y-[] in ImageColumn
           style={{
             transform: "translateX(50%) translateY(-50%) rotateX(36deg)",
           }}
@@ -128,13 +127,13 @@ const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl text-white">
+    <div className='flex flex-col items-center justify-center gap-4'>
+      <p className='text-center text-2xl text-white'>
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
         {/* {secretMessage && <span> - {secretMessage}</span>} */}
       </p>
       <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+        className='rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20'
         onClick={sessionData ? () => void signOut() : () => void signIn()}
       >
         {sessionData ? "Sign out" : "Sign in"}
