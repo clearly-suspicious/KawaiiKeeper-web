@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import useSWR from "swr";
 
-import Button from "../components/base/Button";
 import Header from "../components/Header";
 import PrintObject from "../components/stripe/PrintObject";
 import { fetchGetJSON } from "../utils/api-helpers";
@@ -28,22 +27,18 @@ const ResultPage: NextPage = () => {
       <Header
         sessionData={sessionData}
         rightButtons={[
-          sessionData ? (
-            <Button key={1} onClick={() => router.push("/app")}>
-              <> Go to App </>
-            </Button>
-          ) : (
-            <></>
-          ),
+          sessionData
+            ? { children: <> Go to App </>, onClick: () => router.push("/app") }
+            : undefined,
         ]}
       />
 
-      <main className="relative grid w-full place-items-center overflow-hidden bg-[#070707] px-5">
-        <section className="container mx-auto flex min-h-screen w-full flex-col py-12 ">
-          <div className="container mx-auto text-white">
-            <div className="prose prose-invert">
-              <h1 className="pt-4 text-gray-200">Payment Result</h1>
-              <h2 className="mb-4 text-emerald-300">
+      <main className='relative grid w-full place-items-center overflow-hidden bg-[#070707] px-5'>
+        <section className='container mx-auto flex min-h-screen w-full flex-col py-12 '>
+          <div className='container mx-auto text-white'>
+            <div className='prose prose-invert'>
+              <h1 className='pt-4 text-gray-200'>Payment Result</h1>
+              <h2 className='mb-4 text-emerald-300'>
                 Status: {data?.payment_intent?.status ?? "loading..."}
               </h2>
             </div>
