@@ -12,19 +12,18 @@ import BuyTokenDialog from "./BuyTokenDialog";
 import Sparkles from "./svgs/Sparkles";
 import { api } from "../utils/api";
 
-type RightButtons =
-  | Omit<
-      React.ComponentPropsWithoutRef<typeof Button> &
-        Partial<DropdownMenu.DropdownMenuItemProps> & {
-          children: React.ReactNode;
-        },
-      "onClick"
-    >
+type RightButton =
+  | {
+      children: React.ReactNode;
+      onClick?: () => void;
+      className?: string;
+    }
   | undefined;
 
 type Props = {
   sessionData?: Session | null;
-  rightButtons?: RightButtons[];
+  /** Use onSelect so that it work on mobile too */
+  rightButtons?: RightButton[];
 };
 
 const DiscordLogo = ({ className }: { className?: string }) => {
@@ -130,9 +129,10 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
           />
           <div className='mr-8 hidden items-center space-x-4 sm:flex'>
             {rightButtons.filter(Boolean).map((button, i) => {
-              const { children, onSelect, ...rest } = button;
+              if (!button) return undefined;
+              const { children, ...rest } = button;
               return (
-                <Button key={i} onClick={onSelect} {...rest}>
+                <Button key={i} {...rest}>
                   {children}
                 </Button>
               );
@@ -204,18 +204,21 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
                   className='m-4 min-w-[220px] rounded-md border border-gray-800 bg-[rgba(0,0,0,0.64)] p-[5px] backdrop-blur-lg will-change-[opacity,transform] data-[side=top]:animate-dropdownSlideDownAndFade data-[side=right]:animate-dropdownSlideLeftAndFade data-[side=bottom]:animate-dropdownSlideUpAndFade data-[side=left]:animate-dropdownSlideRightAndFade'
                   sideOffset={5}
                 >
-                  {rightButtons.filter(Boolean).map((button, index) => (
-                    <DropdownMenu.Item
-                      key={index}
-                      className={twMerge(
-                        "group relative my-2 flex h-[24px] select-none items-center rounded-[3px] px-[5px] pl-[18px] text-[13px] leading-none text-gray-200 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-600 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1",
-                        button.className
-                      )}
-                      onSelect={button.onSelect}
-                    >
-                      <>{button.children}</>
-                    </DropdownMenu.Item>
-                  ))}
+                  {rightButtons.filter(Boolean).map((button, index) => {
+                    if (!button) return undefined;
+                    return (
+                      <DropdownMenu.Item
+                        key={index}
+                        className={twMerge(
+                          "group relative my-2 flex h-[24px] select-none items-center rounded-[3px] px-[5px] pl-[18px] text-[13px] leading-none text-gray-200 outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-600 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1",
+                          button.className
+                        )}
+                        onSelect={button.onClick}
+                      >
+                        <>{button.children}</>
+                      </DropdownMenu.Item>
+                    );
+                  })}
                   {sessionData && (
                     <DropdownMenu.Item
                       className={twMerge(
@@ -228,7 +231,7 @@ const Header = ({ sessionData, rightButtons = [] }: Props) => {
                   )}
                   <DropdownMenu.Item
                     className={twMerge(
-                      "group relative flex h-[24px] select-none items-center rounded-[3px] border border-[rgba(248,205,123,0.4)] py-4  px-[18px] text-[13px] leading-none text-gray-200 data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-600 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1"
+                      "group relative flex h-[24px] select-none items-center rounded-[3px] border border-[rgba(248,205,123,0.4)] py-5 px-[18px] text-[13px] leading-none text-gray-200 data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-600 data-[disabled]:text-mauve8 data-[highlighted]:text-violet1"
                     )}
                     onSelect={() => setIsDialogOpen(true)}
                   >

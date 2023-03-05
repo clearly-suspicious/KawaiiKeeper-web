@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 
-import Button from "../components/base/Button";
 import BuyTokenDialog from "../components/BuyTokenDialog";
 import Header from "../components/Header";
 import ImageCard from "../components/ImageCard";
@@ -31,8 +30,8 @@ const CollectionCard = ({
     [collection.id]
   );
   return (
-    <div className="relative flex h-full w-full max-w-[512px] flex-col space-y-4">
-      <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+    <div className='relative flex h-full w-full max-w-[512px] flex-col space-y-4'>
+      <div className='relative aspect-square w-full overflow-hidden rounded-xl'>
         {collection.photos[0] ? (
           <Image
             src={collection.photos[0].url as string}
@@ -40,12 +39,12 @@ const CollectionCard = ({
             alt={collection.photos[0].prompt + " image"}
           />
         ) : (
-          <div className="h-full w-full rounded-xl border" />
+          <div className='h-full w-full rounded-xl border' />
         )}
       </div>
-      <div className="grid w-full grid-cols-3 gap-4">
+      <div className='grid w-full grid-cols-3 gap-4'>
         {collection.photos[1] ? (
-          <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+          <div className='relative aspect-square w-full overflow-hidden rounded-xl'>
             <Image
               src={collection.photos[1].url as string}
               fill
@@ -53,10 +52,10 @@ const CollectionCard = ({
             />{" "}
           </div>
         ) : (
-          <div className="aspect-square w-full rounded-xl border" />
+          <div className='aspect-square w-full rounded-xl border' />
         )}
         {collection.photos[2] ? (
-          <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+          <div className='relative aspect-square w-full overflow-hidden rounded-xl'>
             <Image
               src={collection.photos[2].url as string}
               fill
@@ -64,19 +63,19 @@ const CollectionCard = ({
             />{" "}
           </div>
         ) : (
-          <div className="aspect-square w-full rounded-xl border" />
+          <div className='aspect-square w-full rounded-xl border' />
         )}
         {collection.photos.length > 3 ? (
           <div
             style={{
               backgroundColor: `${randomLightColor}`,
             }}
-            className="grid place-items-center rounded-xl text-[20px] font-semibold text-gray-800"
+            className='grid place-items-center rounded-xl text-[20px] font-semibold text-gray-800'
           >
             +{collection.photos.length - 3}
           </div>
         ) : collection.photos[3] ? (
-          <div className="relative aspect-square w-full overflow-hidden rounded-xl">
+          <div className='relative aspect-square w-full overflow-hidden rounded-xl'>
             <Image
               src={collection.photos[3].url as string}
               fill
@@ -84,10 +83,10 @@ const CollectionCard = ({
             />{" "}
           </div>
         ) : (
-          <div className="aspect-square w-full rounded-xl border" />
+          <div className='aspect-square w-full rounded-xl border' />
         )}
       </div>
-      <div className="font-semibold text-gray-200">{collection.name}</div>
+      <div className='font-semibold text-gray-200'>{collection.name}</div>
     </div>
   );
 };
@@ -120,25 +119,21 @@ const Profile = () => {
       <Header
         sessionData={sessionData}
         rightButtons={[
-          sessionData ? (
-            <Button key={1} onClick={() => router.push("/app")}>
-              <> Go to App </>
-            </Button>
-          ) : (
-            <></>
-          ),
+          sessionData
+            ? { children: <> Go to App </>, onClick: () => router.push("/app") }
+            : undefined,
         ]}
       />
 
-      <main className="relative grid w-full place-items-center overflow-hidden bg-[#070707] px-5">
-        <section className="container mx-auto flex min-h-screen w-full flex-col py-12 ">
-          <div className="mb-12 w-full">
-            <div className="flex flex-col justify-between space-x-4 sm:flex-row sm:items-center">
-              <h1 className="text-[56px] font-bold text-gray-200">
+      <main className='relative grid w-full place-items-center overflow-hidden bg-[#070707] px-5'>
+        <section className='container mx-auto flex min-h-screen w-full flex-col py-12 '>
+          <div className='mb-12 w-full'>
+            <div className='mb-8 flex flex-col justify-between space-x-4  sm:flex-row sm:items-center'>
+              <h1 className='max-w-[85vw] overflow-hidden overflow-ellipsis whitespace-nowrap text-[42px] font-bold text-gray-200 sm:max-w-[70vw] sm:text-[56px]'>
                 {sessionData?.user?.name}
               </h1>
-              <div className=" flex items-center ">
-                <p className="mr-4 text-gray-300">
+              <div className=' flex items-center '>
+                <p className='mr-4 text-gray-300'>
                   {getTokens.data ? getTokens.data.tokens : 0}
                 </p>
                 <BuyTokenDialog discordId={sessionData?.user?.discordId} />
@@ -149,9 +144,9 @@ const Profile = () => {
                 {
                   title: (
                     <>
-                      <div className="flex items-center space-x-2">
+                      <div className='flex items-center space-x-2'>
                         <span>Generations</span>
-                        <span className="min-w-[24px] rounded-lg bg-pink-300 py-0.5 px-1 text-black">
+                        <span className='min-w-[24px] rounded-lg bg-pink-300 py-0.5 px-1 text-black'>
                           {userPhotos.data
                             ? userPhotos.data.pages[0]?.pagination.totalCount
                             : 0}
@@ -161,7 +156,7 @@ const Profile = () => {
                   ),
                   content: (
                     <>
-                      <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                      <div className='grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
                         {userPhotos.data && (
                           <>
                             {userPhotos.data.pages.map((group, i) =>
@@ -183,9 +178,9 @@ const Profile = () => {
                 {
                   title: (
                     <>
-                      <div className="flex items-center space-x-2">
+                      <div className='flex items-center space-x-2'>
                         <span>Collections</span>
-                        <span className="min-w-[24px] rounded-lg bg-blue-300 py-0.5 px-1 text-black">
+                        <span className='min-w-[24px] rounded-lg bg-blue-300 py-0.5 px-1 text-black'>
                           {userCollections.data
                             ? userCollections.data.data.length
                             : 0}
@@ -196,7 +191,7 @@ const Profile = () => {
                   value: "tab2",
                   content: (
                     <>
-                      <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                      <div className='grid w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
                         {userCollections.data &&
                           userCollections.data.data.map((collection) => (
                             <CollectionCard

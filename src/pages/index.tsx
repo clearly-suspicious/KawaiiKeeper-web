@@ -63,7 +63,7 @@ const Home = () => {
           sessionData
             ? {
                 children: <> Go to App </>,
-                onSelect: () => router.push("/app"),
+                onClick: () => router.push("/app"),
               }
             : undefined,
         ]}
